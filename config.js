@@ -1,0 +1,4 @@
+var delicious = {
+	username: '',
+	password: ''
+};

@@ -91,7 +91,7 @@ Bookmark.prototype = {
 
 	requestTags: function(callback) {
 		$.ajax({
-			url: 'https://mjacuk:88918072@api.del.icio.us/v1/posts/suggest',
+			url: 'https://' + delicious.username + ':' + delicious.password + '@api.del.icio.us/v1/posts/suggest',
 
 			data: {
 				url: this.url
