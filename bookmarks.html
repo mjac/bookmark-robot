@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Bookmarks</title>
+		<link rel="stylesheet" type="text/css" href="bookmarks.css" />
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="bookmarks.js"></script>
+		<script type="text/javascript" src="Bookmark.js"></script>
+		<script type="text/javascript" src="Tag.js"></script>
+	</head>
+	<body>
+		<div id="controls">
+			<p>
+				<span id="actions">
+					<strong>Actions</strong>
+					<button id="actionConnect">Connect</button>
+					<button id="actionSave">Save</button>
+					<button id="actionDelete">Delete</button>
+				</span>
+				<span id="selection">
+					<strong>Select</strong>
+					<button id="selectAll">All</button>
+					<button id="selectInvert">Invert</button>
+					<button id="selectNone">None</button>
+					<button id="selectChanged">Changed</button>
+					<button id="selectLoaded">Loaded</button>
+					<button id="selectFailed">Failed</button>
+					<button id="selectRepeated">Repeated</button>
+				</span>
+			</p>
+			<p>
+				<span id="view">
+					<input type="checkbox" id="viewHttp" checked="checked" />
+					<strong>Only remote http(s)</strong>
+				</span>
+				<span id="view">
+					<input type="checkbox" id="viewChecked" />
+					<strong>Hide unchecked</strong>
+				</span>
+			</p>
+		</div>
+		<table id="bookmarksTable">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Name</th>
+					<th>Title</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</body>
+</html>
