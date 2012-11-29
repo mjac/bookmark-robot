@@ -65,7 +65,7 @@ function readTree(bookmarkTree, hierarchy, bookmarks) {
 }
 
 function performAction(fn) {
-	$('#bookmarksTable input[type=checkbox]:checked').each(function (idx, input) {
+	$('#bookmarksTable input[type=checkbox]:checked')(function (idx, input) {
 		fn(idx, bookmarkList[$(input).val()]);
 	});
 }
@@ -150,53 +150,48 @@ function getTagList(tagMap) {
 	return $.map(tagMap, function (a) { return a; });
 }
 
-function len(a){var b = 0;for (c in a) {++b;} return b;}
+function len(bookmarks) {
+	var a = 0;
 
-function order(tagMap, ascend) {
-	var newTagMap = tagMap.concat();
-
-	newTagMap.sort(function (a, b) {
-		if (a.tags.length < b.tags.length) {
-			return ascend ? -1 : 1;
-		}
-
-		if (a.tags.length > b.tags.length) {
-			return ascend ? 1 : -1;
-		}
-
-		if (a.bookmarks.length < b.bookmarks.length) {
-			return ascend ? -1 : 1;
-		}
-
-		if (a.bookmarks.length > b.bookmarks.length) {
-			return ascend ? 1 : -1;
-		}
-
-		return 0;
+	$.each(bookmarks, function () {
+		++a;
 	});
 
-	return newTagMap;
+	return a;
 }
 
 
+var tagLog = function () {
+	var bookmarks = [];
+
+	return function (actionTitle, tag) {
+		var newBookmarks = tag.getAllBookmarks();
+
+		console.log(actionTitle, len(bookmarks) + " -> " + len(newBookmarks));
+
+		bookmarks = newBookmarks;
+	};
+}();
+
 function getOptimal(bookmarkList, recurse) {
+		console.log('Bookmark List', bookmarkList.length);
 		var tagMap = getTagMap(bookmarkList);
 
 		var tag = new Tag(new Date().toISOString());
-		tag.addTags(getTagList(tagMap));
-		console.log('start', tag.getAllBookmarks().length);
+		tag.addTags(tagMap);
+		tagLog('Add Tags', tag);
 		tag.optimise(recurse);
-		console.log('optimise', tag.getAllBookmarks().length);
-	//	tag.prune();
-	//	console.log('prune1', tag.getAllBookmarks().length);
+		tagLog('Optimise', tag);
+		tag.prune();
+		tagLog('Prune', tag);
 		tag.removeDuplicates(function (a) {
 			return -a.hierarchy.reduce(function (dist, tag) {
-				return dist + tag.tags.length / 2;
+				return dist + len(tag.tags) / 2;
 			}, 0);
 		});
-		console.log('removedup', tag.getAllBookmarks().length);
+		tagLog('Remove Duplicates', tag);
 		tag.prune();
-		console.log('prune2', tag.getAllBookmarks().length);
+		tagLog('Prune', tag);
 		tag.markBookmarksUnsorted();
 
 		return tag;

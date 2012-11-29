@@ -1,7 +1,8 @@
-function Bookmark(bookmarkTree, tags) {
+function Bookmark(bookmarkTree, hierarchy) {
 	this.id = bookmarkTree.id;
 	this.title = bookmarkTree.title;
-	this.tags = tags;
+	this.tags = [];
+	this.hierarchy = hierarchy;
 	this.url = bookmarkTree.url;
 
 	this.found = null;
@@ -67,22 +68,34 @@ Bookmark.prototype = {
 			tags = [];
 		}
 
-//		tags = tags.concat(this.title.split(' ').map(function (tag) {
-//			return tag.toLowerCase();
-//		}).filter(function (tag) {
-//			var stopWords = ['and', 'the', 'free', 'for', 'how', 'with', 'your', 'what', 'online', 'why', 'best',  'home'];
-//			return tag.length > 2 && /.*\w.*/.test(tag) && stopWords.indexOf(tag) === -1;
-//		}));
+		//tags = tags.concat(this.hierarchy);
+
+		tags = tags.concat(this.title.split(' ').map(function (tag) {
+			return tag.toLowerCase();
+		}).filter(function (tag) {
+			var stopWords = ['and', 'the', 'free', 'for', 'how', 'with', 'your', 'what', 'online', 'why', 'best',  'home'];
+			return tag.length > 2 && /.*\w.*/.test(tag) && stopWords.indexOf(tag) === -1;
+		}));
 
 		var urlMatch = this.url.match(/\/\/(?:www\.)?([^/]+)/);
 		if (urlMatch !== null) {
 			tags.push(urlMatch[1]);
 		}
 
-		return tags.filter(function (tag) {
+		tags = tags.filter(function (tag) {
 			var stopWords = ['toread', 'reference', 'web', 'blog', 'archive', 'ifttt'];
 			return tag.indexOf(':') === -1 && stopWords.indexOf(tag) === -1;
 		});
+
+		tags.sort();
+
+		return tags.reduce(function (arr, val) {
+			if (arr[arr.length - 1] !== val) {
+				arr.push(val);
+			}
+
+			return arr;
+		}, []);
 	},
 
 	hasNewTitle: function () {
