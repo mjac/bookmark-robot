@@ -84,18 +84,18 @@ Tag.prototype = {
 		});
 
 		chrome.bookmarks.create({
-			title: this.name,
+			title: this.name + ' (' + bookmarks.length + ', ' + tags.length + ')',
 			parentId: parentTree.id
 		}, function (tagTree) {
 			tags.forEach(function (subTag) {
 				subTag.createHierarchy(tagTree);
 			});
 
-			bookmarks.forEach(function (bookmark) {
-				chrome.bookmarks.move(bookmark.id, {
-					parentId: tagTree.id
-				});
-			});
+//			bookmarks.forEach(function (bookmark) {
+//				chrome.bookmarks.move(bookmark.id, {
+//					parentId: tagTree.id
+//				});
+//			});
 		});
 	},
 
@@ -120,7 +120,6 @@ Tag.prototype = {
 
 				if (commonTag.contains(tag)) {
 					commonTag.addTag(tag.clone());
-					delete this.tags[tag.name];
 					found = true;
 					break;
 				}

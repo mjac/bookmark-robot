@@ -185,9 +185,22 @@ function getOptimal(bookmarkList, recurse) {
 		tag.prune();
 		tagLog('Prune', tag);
 		tag.removeDuplicates(function (a) {
-			return -a.hierarchy.reduce(function (dist, tag) {
-				return dist + len(tag.tags) / 2;
-			}, 0);
+			var ownTag = a.hierarchy[a.hierarchy.length - 1];
+
+			var bookmarkDiff = Math.abs(20 - len(ownTag.bookmarks));
+			var hierarchyDiff = Math.abs(1 + Math.log(bookmarkList.length) / Math.log(20) - a.hierarchy.length);
+
+			var tagDiff = 0;
+			if (a.hierarchy.length > 1) {
+				var parentTag = a.hierarchy[a.hierarchy.length - 2];
+				tagDiff = Math.abs(20 - len(parentTag.tags));
+			}
+
+			var diff = 100 * hierarchyDiff + tagDiff + 5 * bookmarkDiff;
+			return diff;
+//			return -a.hierarchy.reduce(function (dist, tag) {
+//				return dist + len(tag.tags) / 2;
+//			}, 0);
 		});
 		tagLog('Remove Duplicates', tag);
 		tag.prune();

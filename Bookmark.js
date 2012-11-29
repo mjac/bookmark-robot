@@ -68,7 +68,7 @@ Bookmark.prototype = {
 			tags = [];
 		}
 
-		//tags = tags.concat(this.hierarchy);
+	//	tags = tags.concat(this.hierarchy);
 
 		tags = tags.concat(this.title.split(' ').map(function (tag) {
 			return tag.toLowerCase();
