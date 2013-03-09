@@ -56,46 +56,20 @@ Bookmark.prototype = {
 	getTags: function () {
 		var tags;
 
-		function capitaliseFirstLetter(string) {
-			return string.charAt(0).toUpperCase() + string.slice(1);
-		}
-
 		if (this.url in localStorage) {
 			tags = JSON.parse(localStorage[this.url]).map(function (tag) {
-				return tag; // capitaliseFirstLetter(tag);
+				return tag;
 			});
 		} else {
 			tags = [];
 		}
-
-	//	tags = tags.concat(this.hierarchy);
-
-		tags = tags.concat(this.title.split(' ').map(function (tag) {
-			return tag.toLowerCase();
-		}).filter(function (tag) {
-			var stopWords = ['and', 'the', 'free', 'for', 'how', 'with', 'your', 'what', 'online', 'why', 'best',  'home'];
-			return tag.length > 2 && /.*\w.*/.test(tag) && stopWords.indexOf(tag) === -1;
-		}));
 
 		var urlMatch = this.url.match(/\/\/(?:www\.)?([^/]+)/);
 		if (urlMatch !== null) {
 			tags.push(urlMatch[1]);
 		}
 
-		tags = tags.filter(function (tag) {
-			var stopWords = ['toread', 'reference', 'web', 'blog', 'archive', 'ifttt'];
-			return tag.indexOf(':') === -1 && stopWords.indexOf(tag) === -1;
-		});
-
-		tags.sort();
-
-		return tags.reduce(function (arr, val) {
-			if (arr[arr.length - 1] !== val) {
-				arr.push(val);
-			}
-
-			return arr;
-		}, []);
+		return Tag.normalizeTags(tags);
 	},
 
 	hasNewTitle: function () {

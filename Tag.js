@@ -6,6 +6,71 @@ function Tag(tagName) {
 	this._allBookmarks = null;
 }
 
+Tag.tagMap = {};
+
+Tag.normalizeTags = function (tags) {
+	// Only removing length because jQuery has a bug in $.each that decides the input object/array is an 
+	// array if there is a length property
+	tags = tags.filter(function (tag) {
+		var stopWords = ['toread', 'article', 'reference', 'web', 'blog', 'archive', 'ifttt', 'length', 'are', 'you'];
+		return tag.indexOf(':') === -1 && stopWords.indexOf(tag) === -1;
+	});
+
+	tags.sort();
+
+	tags = tags.reduce(function (arr, val) {
+		if (arr[arr.length - 1] !== val) {
+			arr.push(val);
+		}
+
+		return arr;
+	}, []);
+
+	function capitaliseFirstLetter(string) {
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+
+	tags = tags.map(function (tag) {
+		var similarTags = [
+			tag.substring(0, tag.length - 1),
+			tag + 's',
+			tag.replace('s', '#'),
+			tag.replace('#', 's')
+		].filter(function (similarTag) {
+			return similarTag !== tag;
+		});
+
+		var tagVariations = similarTags.concat(
+			similarTags.map(capitaliseFirstLetter),
+			similarTags.map(function (tag) {
+				return tag.toUpperCase();
+			}),
+			similarTags.map(function (tag) {
+				return tag.toLowerCase();
+			})
+		);
+
+		var variationExists = tagVariations.some(function (baseTag) {
+			if (baseTag in Tag.tagMap) {
+				tag = baseTag;
+				return true;
+			}
+
+			return false;
+		});
+
+		if (variationExists) {
+			++Tag.tagMap[tag];
+		} else {
+			Tag.tagMap[tag] = 1;
+		}
+
+		return tag;
+	});
+
+	return tags;
+};
+
 Tag.prototype = {
 	addBookmark: function (bookmark) {
 		this.bookmarks[bookmark.url] = bookmark;
@@ -84,18 +149,18 @@ Tag.prototype = {
 		});
 
 		chrome.bookmarks.create({
-			title: this.name + ' (' + bookmarks.length + ', ' + tags.length + ')',
+			title: this.name,// + ' (' + bookmarks.length + ', ' + tags.length + ')',
 			parentId: parentTree.id
 		}, function (tagTree) {
 			tags.forEach(function (subTag) {
 				subTag.createHierarchy(tagTree);
 			});
 
-//			bookmarks.forEach(function (bookmark) {
-//				chrome.bookmarks.move(bookmark.id, {
-//					parentId: tagTree.id
-//				});
-//			});
+			bookmarks.forEach(function (bookmark) {
+				chrome.bookmarks.move(bookmark.id, {
+					parentId: tagTree.id
+				});
+			});
 		});
 	},
 
@@ -107,30 +172,25 @@ Tag.prototype = {
 		return this._allBookmarks;
 	},
 
-	optimise: function (recursive) {
+	optimise: function () {
 		var desc = this.sortByCount();
 
 		while (desc.length > 0) {
 			var tag = desc.pop();
-
-			var found = false;
 
 			for (var tagIdx in desc) {
 				var commonTag = desc[tagIdx];
 
 				if (commonTag.contains(tag)) {
 					commonTag.addTag(tag.clone());
-					found = true;
 					break;
 				}
 			}
 		}
 
-		if (recursive) {
-			$.each(this.tags, function (tagName, tag) {
-				tag.optimise();
-			});
-		}
+		$.each(this.tags, function (tagName, tag) {
+			tag.optimise();
+		});
 
 		this._clearCache();
 	},
@@ -157,7 +217,14 @@ Tag.prototype = {
 		$.each(oldTags, function (idx, subTag) {
 			subTag.prune();
 
-			if (len(subTag.tags) <= 1 && len(subTag.bookmarks) <= 3 || this.name.indexOf(subTag.name) >= 0 || subTag.name.indexOf(this.name) >= 0) {
+			var subTagLen = len(subTag.tags);
+			var subBookmarkLen = len(subTag.bookmarks);
+
+			var tooSmall = subTagLen <= 1 && subBookmarkLen <= 3;
+			var sameName = this.name.indexOf(subTag.name) >= 0 || subTag.name.indexOf(this.name) >= 0;
+			var selfSmall = subBookmarkLen < 20 && len(this.bookmarks) < 20;
+
+			if (tooSmall || sameName || selfSmall) {
 				this.addBookmarks(subTag.bookmarks);
 				this.addTags(subTag.tags);
 			} else {

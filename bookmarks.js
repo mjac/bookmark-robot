@@ -65,7 +65,7 @@ function readTree(bookmarkTree, hierarchy, bookmarks) {
 }
 
 function performAction(fn) {
-	$('#bookmarksTable input[type=checkbox]:checked')(function (idx, input) {
+	$('#bookmarksTable input[type=checkbox]:checked').each(function (idx, input) {
 		fn(idx, bookmarkList[$(input).val()]);
 	});
 }
