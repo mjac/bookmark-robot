@@ -1,5 +1,8 @@
 $(function () {
 	$("#demo1").jstree({ 
+		core: {
+			animation: 0
+		},
 		"json_data" : {
 			"data" : [
 				{ 
