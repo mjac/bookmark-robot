@@ -11,8 +11,9 @@ Tag.tagMap = {};
 Tag.normalizeTags = function (tags) {
 	// Only removing length because jQuery has a bug in $.each that decides the input object/array is an 
 	// array if there is a length property
+	// 'constructor' causes JS error
 	tags = tags.filter(function (tag) {
-		var stopWords = ['toread', 'article', 'reference', 'web', 'blog', 'archive', 'ifttt', 'length', 'are', 'you'];
+		var stopWords = ['toread', 'article', 'reference', 'web', 'blog', 'archive', 'ifttt', 'length', 'are', 'you', 'constructor'];
 		return tag.indexOf(':') === -1 && stopWords.indexOf(tag) === -1;
 	});
 
