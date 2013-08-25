@@ -1,24 +1,43 @@
 $(function () {
-	$("#demo1").jstree({ 
-		core: {
-			animation: 0
-		},
-		"json_data" : {
-			"data" : [
-				{ 
-					"data" : "A node", 
-					"metadata" : { id : 23 },
-					"children" : [ "Child 1", "A Child 2" ]
+	function loadTree() {
+		chrome.bookmarks.getTree(function (bookmarkTree) {
+			var jsTreeJson = mapBookmarksToJstree(bookmarkTree[0].children);
+
+			$("#demo1").jstree({ 
+				core: {
+					animation: 0
 				},
-				{ 
-					"attr" : { "id" : "li.node.id1" }, 
-					"data" : { 
-						"title" : "Long format demo", 
-						"attr" : { "href" : "#" } 
-					} 
-				}
-			]
-		},
-		"plugins" : [ "themes", "json_data", "ui" ]
-	}).bind("select_node.jstree", function (e, data) { alert(jQuery.data(data.rslt.obj[0], "id")); });
+				json_data: {
+					data: jsTreeJson
+				},
+				plugins: [ "themes", "json_data", "ui" ]
+			});
+		});
+	}
+
+	function mapBookmarksToJstree(bookmarkTree) {
+		if ('children' in bookmarkTree) {
+			return {
+				data: bookmarkTree.title,
+				children: mapBookmarksToJstree(bookmarkTree.children)
+			};
+		}
+
+		if ($.isArray(bookmarkTree)) {
+			return bookmarkTree.map(function (bookmarkTree) {
+				return mapBookmarksToJstree(bookmarkTree);
+			});
+		}
+
+		var newBookmark = new Bookmark(bookmarkTree, []);
+
+		return {
+			data: newBookmark.title,
+			metadata: newBookmark
+		};
+	}
+
+	$(document).ready(function () {
+		loadTree();
+	});
 });
