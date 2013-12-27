@@ -5,14 +5,16 @@ function Bookmark(bookmarkTree, hierarchy) {
 	this.hierarchy = hierarchy;
 	this.url = bookmarkTree.url;
 
+	// Old -> 
 	this.found = null;
 	this.loading = false;
 
 	this.liveTitle = null;
 }
 
-Bookmark.prototype = {
+var _OldBookmarkprototype = {
 	connect: function(callback) {
+		// Integrate with BookmarkContentRepository, move into controller
 		this.found = null;
 		this.loading = true;
 
@@ -54,22 +56,7 @@ Bookmark.prototype = {
 	},
 
 	getTags: function () {
-		var tags;
-
-		if (this.url in localStorage) {
-			tags = JSON.parse(localStorage[this.url]).map(function (tag) {
-				return tag;
-			});
-		} else {
-			tags = [];
-		}
-
-		var urlMatch = this.url.match(/\/\/(?:www\.)?([^/]+)/);
-		if (urlMatch !== null) {
-			tags.push(urlMatch[1]);
-		}
-
-		return Tag.normalizeTags(tags);
+		// Local tag store
 	},
 
 	hasNewTitle: function () {
@@ -77,28 +64,11 @@ Bookmark.prototype = {
 	},
 
 	requestTags: function(callback) {
-		$.ajax({
-			url: 'https://' + delicious.username + ':' + delicious.password + '@api.del.icio.us/v1/posts/suggest',
-
-			data: {
-				url: this.url
-			},
-
-			dataType: 'xml',
-
-			success: function (data, textStatus, jqXHR) {
-				var tagNodes = $(data).find('*[tag]');
-				
-				var tags = tagNodes.map(function(idx, tagContainer) {
-					return $(tagContainer).attr('tag');
-				}).get();
-
-				callback(tags);
-			}.bind(this),
-		});
+		// Delicious tag store
 	},
 
 	remove: function () {
+		// Use ChromeBookmarkStore
 		chrome.bookmarks.remove(this.id, function () {
 			getRow(this).remove();
 			bookmarkList[bookmarkList.indexOf(this)] = null;
@@ -110,6 +80,7 @@ Bookmark.prototype = {
 			return;
 		}
 
+		// Use ChromeBookmarkStore
 		chrome.bookmarks.update(this.id, {
 			title: this.liveTitle
 		}, function (updatedBookmark) {

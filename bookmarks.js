@@ -82,7 +82,7 @@ function select(fn) {
 
 		var isMatch = fn(idx, bookmark, rowNode);
 
-		rowNode.find('input[type=checkbox]').attr('checked', isMatch);
+		rowNode.find('input[type=checkbox]').prop('checked', isMatch);
 		rowNode.toggleClass('selected', isMatch);
 	});
 }
