@@ -8,92 +8,28 @@ function Tag(tagName) {
 
 Tag.tagMap = {};
 
-Tag.normalizeTags = function (tags) {
-	// Only removing length because jQuery has a bug in $.each that decides the input object/array is an 
-	// array if there is a length property
-	// 'constructor' causes JS error
-	tags = tags.filter(function (tag) {
-		var stopWords = ['toread', 'article', 'reference', 'web', 'blog', 'archive', 'ifttt', 'length', 'are', 'you', 'constructor'];
-		return tag.indexOf(':') === -1 && stopWords.indexOf(tag) === -1;
-	});
-
-	tags.sort();
-
-	tags = tags.reduce(function (arr, val) {
-		if (arr[arr.length - 1] !== val) {
-			arr.push(val);
-		}
-
-		return arr;
-	}, []);
-
-	function capitaliseFirstLetter(string) {
-		return string.charAt(0).toUpperCase() + string.slice(1);
-	}
-
-	tags = tags.map(function (tag) {
-		var similarTags = [
-			tag.substring(0, tag.length - 1),
-			tag + 's',
-			tag.replace('s', '#'),
-			tag.replace('#', 's')
-		].filter(function (similarTag) {
-			return similarTag !== tag;
-		});
-
-		var tagVariations = similarTags.concat(
-			similarTags.map(capitaliseFirstLetter),
-			similarTags.map(function (tag) {
-				return tag.toUpperCase();
-			}),
-			similarTags.map(function (tag) {
-				return tag.toLowerCase();
-			})
-		);
-
-		var variationExists = tagVariations.some(function (baseTag) {
-			if (baseTag in Tag.tagMap) {
-				tag = baseTag;
-				return true;
-			}
-
-			return false;
-		});
-
-		if (variationExists) {
-			++Tag.tagMap[tag];
-		} else {
-			Tag.tagMap[tag] = 1;
-		}
-
-		return tag;
-	});
-
-	return tags;
-};
-
 Tag.prototype = {
-	addBookmark: function (bookmark) {
+	AddBookmark: function (bookmark) {
 		this.bookmarks[bookmark.url] = bookmark;
-		this._clearCache();
 	},
 
-	addBookmarks: function (bookmarks) {
+	RemoveBookmark: function (bookmark) {
+		delete this.bookmarks[bookmark.url];
+	},
+
+	AddBookmarks: function (bookmarks) {
 		this.bookmarks = $.extend(this.bookmarks, bookmarks);
-		this._clearCache();
 	},
 
-	addTag: function (tag) {
+	AddTag: function (tag) {
 		this.tags[tag.name] = tag;
-		this._clearCache();
 	},
 
-	addTags: function (tagList) {
+	AddTags: function (tagList) {
 		this.tags = $.extend(this.tags, tagList);
-		this._clearCache();
 	},
 
-	clone: function () {
+	Clone: function () {
 		var tag = new Tag(this.name);
 
 		tag.bookmarks = $.extend({}, this.bookmarks);
@@ -107,9 +43,36 @@ Tag.prototype = {
 		return tag;
 	},
 
-	contains: function (tag) {
-		var selfBookmarks = this.getAllBookmarks();
-		var subsetBookmarks = tag.getAllBookmarks();
+	Accept: function (visitor) {
+		visitor.visit(this);
+
+		$.each(this.tags, function (tagName, tag) {
+			tag.accept(visitor);
+		});
+	}
+};
+
+
+function AllBookmarkVisitor()
+{
+	this.bookmarks = [{}];
+}
+
+AllBookmarkVisitor.prototype = {
+	Visit: function (tag)
+	{
+		this.bookmarks.push(tag.bookmarks);
+	},
+
+	GetAllBookmarks: function ()
+	{
+		return $.extend.apply($, this.bookmarks);
+	},
+
+	// Contains all subset of bookmarks
+	Contains: function (tag) {
+		var selfBookmarks = this.GetAllBookmarks();
+		var subsetBookmarks = tag.GetAllBookmarks();
 
 		for (url in subsetBookmarks) {
 			if (!(url in selfBookmarks)) {
@@ -118,63 +81,76 @@ Tag.prototype = {
 		}
 
 		return true;
-	},
+	}
+};
 
-	createHierarchy: function(parentTree) {
-		var tags = $.map(this.tags, function (i) { return i; });
+function BookmarkHierarchyVisitor()
+{
+	this._bookmarks = {};
+	this._hierarchy = [];
+}
 
-		tags.sort(function (tag1, tag2) {
-			if (tag1.name < tag2.name) {
-				return -1;
+BookmarkHierarchyVisitor.prototype = {
+	Visit: function (tag)
+	{
+		this._hierarchy.push(this);
+
+		var hierarchy = this._hierarchy.concat();
+		var bookmarks = this._bookmarks;
+
+		$.each(tag.bookmarks, function (idx, bookmark) {
+			if (!(bookmark.url in bookmarks)) {
+				bookmarks[bookmark.url] = [];
 			}
 
-			if (tag1.name > tag2.name) {
-				return 1;
-			}
-
-			return 0;
-		});
-
-		var bookmarks = $.map(this.bookmarks, function (i) { return i; });
-
-		bookmarks.sort(function (bookmark1, bookmark2) {
-			if (bookmark1.title < bookmark2.title) {
-				return -1;
-			}
-
-			if (bookmark1.title > bookmark2.title) {
-				return 1;
-			}
-
-			return 0;
-		});
-
-		chrome.bookmarks.create({
-			title: this.name,// + ' (' + bookmarks.length + ', ' + tags.length + ')',
-			parentId: parentTree.id
-		}, function (tagTree) {
-			tags.forEach(function (subTag) {
-				subTag.createHierarchy(tagTree);
-			});
-
-			bookmarks.forEach(function (bookmark) {
-				chrome.bookmarks.move(bookmark.id, {
-					parentId: tagTree.id
-				});
+			bookmarks[bookmark.url].push({
+				hierarchy: hierarchy,
+				bookmark: bookmark
 			});
 		});
 	},
 
-	getAllBookmarks: function () {
-		if (this._allBookmarks === null) {
-			this._allBookmarks = this._getAllBookmarks();
+	Unvisit: function (tag) 
+	{
+		this._hierarchy.pop();
+	},
+};
+
+function TagOptimiser()
+{
+}
+
+TagOptimiser.SortByCount = function (tags) {
+	var tags = $.map(tags, function (val) {
+		return val;
+	});
+		
+	tags.sort(function (a, b) {
+		if (len(a.tags) < len(b.tags)) {
+			return 1;
 		}
 
-		return this._allBookmarks;
-	},
+		if (len(a.tags) > len(b.tags)) {
+			return -1;
+		}
 
-	optimise: function () {
-		var desc = this.sortByCount();
+		if (len(a.bookmarks) < len(b.bookmarks)) {
+			return 1;
+		}
+
+		if (len(a.bookmarks) > len(b.bookmarks)) {
+			return -1;
+		}
+
+		return 0;
+	});
+
+	return tags;
+};
+
+TagOptimiser.prototype = {
+	Visit: function (tag) {
+		var desc = TagOptimiser.SortByCount(tag.tags);
 
 		while (desc.length > 0) {
 			var tag = desc.pop();
@@ -188,32 +164,23 @@ Tag.prototype = {
 				}
 			}
 		}
-
-		$.each(this.tags, function (tagName, tag) {
-			tag.optimise();
-		});
-
-		this._clearCache();
 	},
 
-	markBookmarksUnsorted: function() {
-		if (this.bookmarks.length < 1) {
-			return;
-		}
+	Unvisit: function () {
+	}
+};
 
-		if (!('unsorted' in this.tags)) {
-			this.addTag(new Tag('unsorted'));
-		}
 
-		this.tags.unsorted.addBookmarks(this.bookmarks);
+function TagPruner()
+{
+}
 
-		this.bookmarks = {};
-	},
+TagPruner.prototype = {
+	Visit: function(tag)
+	{
+		var oldTags = tag.tags;
 
-	prune: function() {
-		var oldTags = this.tags;
-
-		this.tags = {};
+		tag.tags = {};
 
 		$.each(oldTags, function (idx, subTag) {
 			subTag.prune();
@@ -222,127 +189,97 @@ Tag.prototype = {
 			var subBookmarkLen = len(subTag.bookmarks);
 
 			var tooSmall = subTagLen <= 1 && subBookmarkLen <= 3;
-			var sameName = this.name.indexOf(subTag.name) >= 0 || subTag.name.indexOf(this.name) >= 0;
-			var selfSmall = subBookmarkLen < 20 && len(this.bookmarks) < 20;
+			var sameName = tag.name.indexOf(subTag.name) >= 0 || subTag.name.indexOf(tag.name) >= 0;
+			var selfSmall = subBookmarkLen < 20 && len(tag.bookmarks) < 20;
 
 			if (tooSmall || sameName || selfSmall) {
-				this.addBookmarks(subTag.bookmarks);
-				this.addTags(subTag.tags);
+				tag.addBookmarks(subTag.bookmarks);
+				tag.addTags(subTag.tags);
 			} else {
-				this.addTag(subTag);
+				tag.addTag(subTag);
 			}
-		}.bind(this));
-	},
+		}.bind(tag));
+	}
+};
 
-	removeBookmark: function (bookmark) {
-		delete this.bookmarks[bookmark.url];
-		this._clearCache();
-	},
 
-	removeDuplicates: function (fn) {
-		var duplicates = this._gatherDuplicates([]);
+function TagWriter(bookmarkStore)
+{
+	this._bookmarkStore = bookmarkStore;
+}
 
-		function removeRoute(route) {
-			var tag = route.hierarchy[route.hierarchy.length - 1];
+TagWriter.prototype = {
+	CreateHierarchy: function(tag, parentTree) {
+		var writer = this;
 
-			tag.removeBookmark(route.bookmark);
+		var tags = $.map(tag.tags, function (i) { return i; });
 
-			route.hierarchy.forEach(function (tag) {
-				tag._clearCache();
-			});
-		}
-
-		$.each(duplicates, function (url, routeList) {
-			routeList.reduce(function (min, route) {
-				var distance = fn(route);
-
-				if (min === null) {
-					return [distance, route];
-				}
-
-				if (distance < min[0]) {
-					removeRoute(min[1]);
-					return [distance, route];
-				}
-
-				removeRoute(route);
-
-				return min;
-			}, null);
-		});
-	},
-
-	sortByCount: function () {
-		var tags = $.map(this.tags, function (val) {
-			return val;
-		});
-			
-		tags.sort(function (a, b) {
-			if (len(a.tags) < len(b.tags)) {
-				return 1;
-			}
-
-			if (len(a.tags) > len(b.tags)) {
+		tags.sort(function (tag1, tag2) {
+			if (tag1.name < tag2.name) {
 				return -1;
 			}
 
-			if (len(a.bookmarks) < len(b.bookmarks)) {
+			if (tag1.name > tag2.name) {
 				return 1;
-			}
-
-			if (len(a.bookmarks) > len(b.bookmarks)) {
-				return -1;
 			}
 
 			return 0;
 		});
 
-		return tags;
-	},
+		var bookmarks = $.map(tag.bookmarks, function (i) { return i; });
 
-	_clearCache: function () {
-		this._allBookmarks = null;
-	},
-
-	_gatherDuplicates: function (hierarchy) {
-		var newHierarchy = hierarchy.concat([this]);
-
-		var bookmarks = {};
-
-		$.each(this.bookmarks, function (idx, bookmark) {
-			if (!(bookmark.url in bookmarks)) {
-				bookmarks[bookmark.url] = [];
+		bookmarks.sort(function (bookmark1, bookmark2) {
+			if (bookmark1.title < bookmark2.title) {
+				return -1;
 			}
 
-			bookmarks[bookmark.url].push({
-				hierarchy: newHierarchy,
-				bookmark: bookmark
-			});
+			if (bookmark1.title > bookmark2.title) {
+				return 1;
+			}
+
+			return 0;
 		});
 
-		$.each(this.tags, function (idx, subTag) {
-			var subBookmarks = subTag._gatherDuplicates(newHierarchy);
+		var store = this._bookmarkStore;
 
-			$.each(subBookmarks, function (url, hierarchyList) {
-				if (url in bookmarks) {
-					bookmarks[url] = bookmarks[url].concat(hierarchyList);
-				} else {
-					bookmarks[url] = hierarchyList;
-				}
+		store.CreateBookmarkFolder(tag.name, parentTree.id, function (tagTree){
+			tags.forEach(function (subTag) {
+				writer.CreateHierarchy(subTag, tagTree);
+			});
+
+			bookmarks.forEach(function (bookmark) {
+				store.MoveBookmark(bookmark.id, tagTree.id, callback);
 			});
 		});
-
-		return bookmarks;
-	},
-
-	_getAllBookmarks: function () {
-		var args = [{}, this.bookmarks];
-
-		args = args.concat($.map(this.tags, function (tag) {
-			return tag.getAllBookmarks();
-		}));
-
-		return $.extend.apply($, args);
 	}
 };
 
+
+function RemoveDuplicates (fn) {
+	// Use BookmarkHierarchyVisitor
+	var duplicates = this._gatherDuplicates([]);
+
+	function removeRoute(route) {
+		var tag = route.hierarchy[route.hierarchy.length - 1];
+		tag.removeBookmark(route.bookmark);
+	}
+
+	$.each(duplicates, function (url, routeList) {
+		routeList.reduce(function (min, route) {
+			var distance = fn(route);
+
+			if (min === null) {
+				return [distance, route];
+			}
+
+			if (distance < min[0]) {
+				removeRoute(min[1]);
+				return [distance, route];
+			}
+
+			removeRoute(route);
+
+			return min;
+		}, null);
+	});
+}
