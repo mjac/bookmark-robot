@@ -10,39 +10,39 @@ function BookmarkTableView(tableNode, bookmarkStore)
 BookmarkTableView.prototype = {
 	UpdateTree: function()
 	{
-		this.bookmarkList = [];
-		this.bookmarkStore.GetBookmarkTree(function (bookmarkTree)
-				{
-					readTree(bookmarkTree[0].children, [], this.bookmarkList);
-					writeTree();
-				});
-	},
+		function readTree(bookmarkTree, hierarchy, bookmarks) {
+			if ('children' in bookmarkTree) {
+				var subHierarchy = hierarchy.concat([bookmarkTree.title]);
+				readTree(bookmarkTree.children, subHierarchy, bookmarks);
+			} else if ($.isArray(bookmarkTree)) {
+				for (localIdx in bookmarkTree) {
+					var folder = bookmarkTree[localIdx];
+					readTree(folder, hierarchy, bookmarks);
+				}
+			} else {
+				var newBookmark = new Bookmark(bookmarkTree, hierarchy);
 
-	ReadTree: function(bookmarkTree, hierarchy, bookmarks) {
-		if ('children' in bookmarkTree) {
-			var subHierarchy = hierarchy.concat([bookmarkTree.title]);
-			readTree(bookmarkTree.children, subHierarchy, bookmarks);
-		} else if ($.isArray(bookmarkTree)) {
-			for (localIdx in bookmarkTree) {
-				var folder = bookmarkTree[localIdx];
-				readTree(folder, hierarchy, bookmarks);
-			}
-		} else {
-			var newBookmark = new Bookmark(bookmarkTree, hierarchy);
+				var onlyHttp = true;
 
-			var onlyHttp = true;
-
-			if (!onlyHttp || /^http/.test(newBookmark.url) && !/(\/\/localhost|\.pdf$)/.test(newBookmark.url)) {
-				bookmarks.push(newBookmark);
+				if (!onlyHttp || /^http/.test(newBookmark.url) && !/(\/\/localhost|\.pdf$)/.test(newBookmark.url)) {
+					bookmarks.push(newBookmark);
+				}
 			}
 		}
+
+		this.bookmarkStore.GetBookmarkTree(function (bookmarkTree)
+				{
+					this.bookmarkList = [];
+					readTree(bookmarkTree[0].children, [], this.bookmarkList);
+					this.WriteTree();
+				}.bind(this));
 	},
 
 	WriteTree: function() {
 		this.tableBody.empty();
 
-		for (bookmarkIdx in bookmarkList) {
-			var bookmark = bookmarkList[bookmarkIdx];
+		for (bookmarkIdx in this.bookmarkList) {
+			var bookmark = this.bookmarkList[bookmarkIdx];
 
 			var bookmarkRow = this.tableBody.append('<tr data-id="' + bookmarkIdx + '"><td class="select"><input type="checkbox" value="' + bookmarkIdx + '" /></td><td class="title"><a>' + bookmark.title + '</a></td><td class="url"><a>' + bookmark.url + '</a></td></tr>');
 		}

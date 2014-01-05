@@ -1,7 +1,8 @@
 $(document).ready(function() {
-	getTree();
-
-	var bookmarkTableView = new BookmarkTableView($('#bookmarkTableView'));
+	var bookmarkStore = new ChromeBookmarkStore();
+	var bookmarkTableView = new BookmarkTableView($('#bookmarksTable'), bookmarkStore);
+	
+	bookmarkTableView.UpdateTree();
 
 	var select = bookmarkTableView.Select.bind(bookmarkTableView);
 	var performAction = bookmarkTableView.PerformAction.bind(bookmarkTableView);
@@ -118,7 +119,7 @@ $(document).ready(function() {
 
 	$('#viewHttp').on('click', function () {
 		onlyHttp = $(this).is(':checked');
-		getTree();
+		bookmarkTableView.UpdateTree();
 	});
 });
 
