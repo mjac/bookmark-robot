@@ -2,6 +2,8 @@ $(document).ready(function() {
 	var bookmarkStore = new ChromeBookmarkStore();
 	var bookmarkTableView = new BookmarkTableView($('#bookmarksTable'), bookmarkStore);
 	
+	var bookmarkContentRepository = new RemoteBookmarkContentRepository();
+
 	bookmarkTableView.UpdateTree();
 
 	var select = bookmarkTableView.Select.bind(bookmarkTableView);
@@ -16,26 +18,10 @@ $(document).ready(function() {
 			connectList.push(bookmark);
 		});
 
-		function addConnections(num) {
-			while (--num >= 0 && connectList.length > 0) {
-				var bookmark = connectList.shift();
-
-				activeConnect.push(bookmark);
-
-				bookmark.connect(function (success) {
-					activeConnect.splice(activeConnect.indexOf(bookmark), 1);
-				});
-			}
-		}
-
-		var interval = setInterval(function () {
-			addConnections(connectionLimit - activeConnect.length);
-
-			if (connectList.length < 1) {
-				clearInterval(interval);
-				return;
-			}
-		}, 50);
+		var url = connectList[0].url;
+		bookmarkContentRepository.GetHTML(url, function (data) {
+			console.log(data);
+		});
 	});
 
 	$('#actionSave').on('click', function () {
@@ -44,7 +30,10 @@ $(document).ready(function() {
 				return;
 			}
 
-			// Use ChromeBookmarkStore
+			bookmarkStore.UpdateBookmarkTitle(bookmark, bookmark.title, function(bookmark, bookmarkTitle)
+				{
+					bookmark.title = bookmarkTitle;
+				});
 		});
 	});
 

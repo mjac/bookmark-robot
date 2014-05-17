@@ -64,7 +64,7 @@ BookmarkTableView.prototype = {
 	},
 
 	GetRow: function(bookmark) {
-		return getRowIdx(bookmarkList.indexOf(bookmark));
+		return getRowIdx(this.bookmarkList.indexOf(bookmark));
 	},
 
 	GetRowIdx: function(bookmarkIdx) {
@@ -73,15 +73,15 @@ BookmarkTableView.prototype = {
 
 	PerformAction: function(fn) {
 		this.tableNode.find('input[type=checkbox]:checked').each(function (idx, input) {
-			fn(idx, bookmarkList[$(input).val()]);
-		});
+			fn(idx, this.bookmarkList[$(input).val()]);
+		}.bind(this));
 	},
 
 	Select: function(fn) {
 		this.tableBody.find('tr').each(function (rowIdx, row) {
 			var rowNode = $(row);
 			var idx = rowNode.data('id');
-			var bookmark = bookmarkList[idx];
+			var bookmark = this.bookmarkList[idx];
 
 			if (bookmark === null) {
 				return;
@@ -91,7 +91,7 @@ BookmarkTableView.prototype = {
 
 			rowNode.find('input[type=checkbox]').prop('checked', isMatch);
 			rowNode.toggleClass('selected', isMatch);
-		});
+		}.bind(this));
 	},
 
 	AttachEvents: function()

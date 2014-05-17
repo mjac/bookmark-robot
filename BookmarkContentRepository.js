@@ -7,10 +7,8 @@ RemoteBookmarkContentRepository.prototype = {
 		this.found = null;
 		this.loading = true;
 
-		updateTable(this);
-
 		$.ajax({
-			url: this.url, 
+			url: bookmarkUrl, 
 
 			dataType: 'html',
 
