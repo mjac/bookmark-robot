@@ -34,10 +34,8 @@ Tag.prototype = {
 
 		tag.bookmarks = $.extend({}, this.bookmarks);
 
-		tag.tags = $.extend({}, this.tags);
-
-		$.each(tag.tags, function (idx, elem) {
-			tag.tags[idx] = elem.clone();
+		$.each(this.tags, function (idx, elem) {
+			tag.AddTag(elem.Clone());
 		});
 
 		return tag;
@@ -47,38 +45,8 @@ Tag.prototype = {
 		visitor.visit(this);
 
 		$.each(this.tags, function (tagName, tag) {
-			tag.accept(visitor);
+			tag.Accept(visitor);
 		});
 	}
 };
 
-
-
-function RemoveDuplicates (fn) {
-	// Use BookmarkHierarchyVisitor
-	var duplicates = this._gatherDuplicates([]);
-
-	function removeRoute(route) {
-		var tag = route.hierarchy[route.hierarchy.length - 1];
-		tag.removeBookmark(route.bookmark);
-	}
-
-	$.each(duplicates, function (url, routeList) {
-		routeList.reduce(function (min, route) {
-			var distance = fn(route);
-
-			if (min === null) {
-				return [distance, route];
-			}
-
-			if (distance < min[0]) {
-				removeRoute(min[1]);
-				return [distance, route];
-			}
-
-			removeRoute(route);
-
-			return min;
-		}, null);
-	});
-}
