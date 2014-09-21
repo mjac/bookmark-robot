@@ -34,5 +34,10 @@ CacheTagStore.prototype = {
 
 			callback(bookmarkUrl, tags);
 		}.bind(this));
+	},
+	
+	ClearBookmarkTags: function (bookmarkUrl)
+	{
+		delete this.storage[bookmarkUrl];
 	}
 }
