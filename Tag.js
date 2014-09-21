@@ -6,8 +6,6 @@ function Tag(tagName) {
 	this._allBookmarks = null;
 }
 
-Tag.tagMap = {};
-
 Tag.prototype = {
 	AddBookmark: function (bookmark) {
 		this.bookmarks[bookmark.url] = bookmark;
