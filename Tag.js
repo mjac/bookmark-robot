@@ -42,7 +42,7 @@ Tag.prototype = {
 	},
 
 	Accept: function (visitor) {
-		visitor.visit(this);
+		visitor.Visit(this);
 
 		$.each(this.tags, function (tagName, tag) {
 			tag.Accept(visitor);

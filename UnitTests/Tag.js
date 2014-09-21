@@ -3,7 +3,7 @@ require(['Tag', 'Bookmark'], function () {
 	{
 		this.lastVisited = null;
 
-		this.visit = function (object) {
+		this.Visit = function (object) {
 			this.lastVisited = object;
 		};
 	}
