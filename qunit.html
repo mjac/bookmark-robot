@@ -16,11 +16,12 @@
 
 		<script type="text/javascript">
 			var unitTests = [
-				'Tag'
+				'Tag',
+				'HtmlParser'
 			];
 
 			require(unitTests.map(function (testType) {
-				return 'UnitTests/' + testType;
+				return 'UnitTests/' + testType + 'Tests';
 			}));
 		</script>
 	</body>
