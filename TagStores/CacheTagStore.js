@@ -11,8 +11,8 @@ CacheTagStore.prototype = {
 	{
 		var tags;
 
-		if (this.url in localStorage) {
-			var tagJson = this.storage[this.url];
+		if (bookmarkUrl in localStorage) {
+			var tagJson = this.storage[bookmarkUrl];
 
 			tags = JSON.parse(tagJson).map(function (tag) {
 				return tag;
@@ -23,15 +23,8 @@ CacheTagStore.prototype = {
 			return;
 		} 
 
-		bookmark.requestTags(function (tags) {
+		this.sourceTagStore.RequestTags(bookmarkUrl, function (tags) {
 			this.storage[bookmarkUrl] = JSON.stringify(tags);
-
-			var urlMatch = bookmarkUrl.match(/\/\/(?:www\.)?([^/]+)/);
-
-			if (urlMatch !== null) {
-				tags.push(urlMatch[1]);
-			}
-
 			callback(bookmarkUrl, tags);
 		}.bind(this));
 	},
