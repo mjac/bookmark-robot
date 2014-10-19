@@ -6,8 +6,6 @@ function Tag(tagName) {
 	this._allBookmarks = null;
 }
 
-Tag.tagMap = {};
-
 Tag.prototype = {
 	AddBookmark: function (bookmark) {
 		this.bookmarks[bookmark.url] = bookmark;
@@ -42,7 +40,7 @@ Tag.prototype = {
 	},
 
 	Accept: function (visitor) {
-		visitor.visit(this);
+		visitor.Visit(this);
 
 		$.each(this.tags, function (tagName, tag) {
 			tag.Accept(visitor);

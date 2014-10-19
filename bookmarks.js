@@ -14,26 +14,29 @@ $(document).ready(function() {
 		var connectList = [];
 		var connectionLimit = 5;
 
-		performAction(function (idx, bookmark) {
+		bookmarkTableView.PerformAction(function (idx, bookmark) {
 			connectList.push(bookmark);
 		});
 
 		var url = connectList[0].url;
 		bookmarkContentRepository.GetHTML(url, function (data) {
-			console.log(data);
+			var title = HtmlParser.GetTitle(data);
+			if (title !== null) {
+				console.log(title);		
+			}
 		});
 	});
 
 	$('#actionSave').on('click', function () {
-		performAction(function (idx, bookmark) {
+		bookmarkTableView.PerformAction(function (idx, bookmark) {
 			if (!bookmark.hasNewTitle()) {
 				return;
 			}
 
 			bookmarkStore.UpdateBookmarkTitle(bookmark, bookmark.title, function(bookmark, bookmarkTitle)
-				{
-					bookmark.title = bookmarkTitle;
-				});
+			{
+				bookmark.title = bookmarkTitle;
+			});
 		});
 	});
 
@@ -42,7 +45,7 @@ $(document).ready(function() {
 			return;
 		}
 
-		performAction(function (idx, bookmark) {
+		bookmarkTableView.PerformAction(function (idx, bookmark) {
 			// Use ChromeBookmarkStore
 			chrome.bookmarks.remove(this.id, function () {
 				getRow(this).remove();

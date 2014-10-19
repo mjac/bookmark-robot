@@ -5,7 +5,7 @@ function Bookmark(title, url) {
 }
 
 function BookmarkTreeBookmark(bookmarkTree, hierarchy) {
-	// call parenet constructor with title/url
+	// call parent constructor with title/url
 	this.id = bookmarkTree.id;
 	this.title = bookmarkTree.title;
 	this.tags = [];

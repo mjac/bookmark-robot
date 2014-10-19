@@ -20,7 +20,7 @@ BookmarkTableView.prototype = {
 					readTree(folder, hierarchy, bookmarks);
 				}
 			} else {
-				var newBookmark = new Bookmark(bookmarkTree, hierarchy);
+				var newBookmark = new BookmarkTreeBookmark(bookmarkTree, hierarchy);
 
 				var onlyHttp = true;
 
@@ -31,11 +31,11 @@ BookmarkTableView.prototype = {
 		}
 
 		this.bookmarkStore.GetBookmarkTree(function (bookmarkTree)
-				{
-					this.bookmarkList = [];
-					readTree(bookmarkTree[0].children, [], this.bookmarkList);
-					this.WriteTree();
-				}.bind(this));
+		{
+			this.bookmarkList = [];
+			readTree(bookmarkTree[0].children, [], this.bookmarkList);
+			this.WriteTree();
+		}.bind(this));
 	},
 
 	WriteTree: function() {
