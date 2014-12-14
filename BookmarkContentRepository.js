@@ -19,7 +19,9 @@ RemoteBookmarkContentRepository.prototype = {
 			},
 
 			error: function (jqXHR, textStatus, errorThrown) {
-				callbackFailure();
+				if (callbackFailure) {
+					callbackFailure();
+				}
 			}
 		});
 	}
