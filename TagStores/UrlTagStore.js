@@ -1,9 +1,5 @@
-function UrlTagStore(sourceTagStore, storage)
+function UrlTagStore()
 {
-	this.sourceTagStore = sourceTagStore;
-
-	// localstorage
-	this.storage = storage;
 }
 
 UrlTagStore.prototype = {
