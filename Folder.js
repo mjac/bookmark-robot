@@ -12,6 +12,17 @@ define(function () {
         
         AddFolder: function (folder) {
             this._folders.push(folder);
+        },
+        
+        GetAllBookmarks: function (folder) {
+            var bookmarks = this._bookmarks.concat();
+            
+            this._folders.forEach(function (folder) {
+                var subBookmarks = folder.GetAllBookmarks();
+                bookmarks = bookmarks.concat(subBookmarks);
+            });
+            
+            return bookmarks;
         }
     };
     

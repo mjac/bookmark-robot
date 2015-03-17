@@ -37,14 +37,15 @@ $(function() {
         bookmarkStore.GetBookmarkTree(function (bookmarkTree)
         {
             var bookmarkList = [];
-            var bookmarks = new folderConstructor('Root');
+            var rootFolder = new folderConstructor('Root');
             
-            readTree(bookmarkTree[0].children, bookmarks);
-            console.log(bookmarks);
-            /*AddTags(bookmarkList, function () {
-                console.log(bookmarkList[0]);
+            readTree(bookmarkTree[0].children, rootFolder);
+            
+            var bookmarkList = rootFolder.GetAllBookmarks();
+            console.log(bookmarkList[0]);
+            AddTags(bookmarkList, function () {
                 //setTreeData(bookmarkList.map(treeNode));
-            }.bind(this));*/
+            }.bind(this));
         }.bind(this));
         
         function AddTags(bookmarkList, callback) {
