@@ -31,7 +31,7 @@ UrlTagStore.prototype = {
         var tags = [];
         
         var firstDotIndex = hostname.indexOf('.');
-        if (firstDotIndex >= 0) {
+        if (firstDotIndex >= 0 && hostname.length > 5) {
             tags.push(hostname);
             
             var hostnamePart = hostname.substring(firstDotIndex + 1);

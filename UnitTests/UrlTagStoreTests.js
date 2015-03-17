@@ -25,6 +25,10 @@ require(['TagStores/UrlTagStore'], function () {
         testSingleTag('http://google.com:25/', 'google.com', assert);
 	});
     
+	QUnit.test('Small hostname parts like co.uk are ignored', function (assert) {
+        testSingleTag('http://google.co.uk/', 'google.co.uk', assert);
+	});
+    
     function testSingleTag(url, expected, assert)
     {
         testMultipleTags(url, [expected], assert);
