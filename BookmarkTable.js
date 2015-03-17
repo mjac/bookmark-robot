@@ -34,7 +34,10 @@ BookmarkTableView.prototype = {
 		{
 			this.bookmarkList = [];
 			readTree(bookmarkTree[0].children, [], this.bookmarkList);
-			this.WriteTree();
+            
+            this.AddTags(function () {
+                this.WriteTree();
+            }.bind(this));
 		}.bind(this));
 	},
 
@@ -44,9 +47,33 @@ BookmarkTableView.prototype = {
 		for (bookmarkIdx in this.bookmarkList) {
 			var bookmark = this.bookmarkList[bookmarkIdx];
 
-			var bookmarkRow = this.tableBody.append('<tr data-id="' + bookmarkIdx + '"><td class="select"><input type="checkbox" value="' + bookmarkIdx + '" /></td><td class="title"><a>' + bookmark.title + '</a></td><td class="url"><a>' + bookmark.url + '</a></td></tr>');
+			var bookmarkRow = this.tableBody.append('<tr data-id="' + bookmarkIdx + 
+                '"><td class="select"><input type="checkbox" value="' + bookmarkIdx + 
+                '" /></td><td class="title"><a>' + bookmark.title + 
+                '</a></td><td class="tags">' + bookmark.tags + 
+                '</td><td class="url"><a>' + bookmark.url + 
+                '</a></td></tr>');
 		}
 	},
+    
+    AddTags: function (callback) {
+        var urlTagStore = new UrlTagStore();
+        
+        var request = new MultipleAsyncRequest();
+        
+        this.bookmarkList.forEach(function (bookmark) {
+            request.AddRequest(function (requestCallback) {
+                urlTagStore.RequestTags(bookmark.url, function (bookmarkUrl, tags) {
+                    bookmark.tags = tags;
+                    requestCallback();
+                });
+            });
+        });
+        
+        request.SetFinalCallback(callback);
+        
+        request.Execute();
+    },
 
 	UpdateTable: function(bookmark) {
 		var rowNode = getRow(bookmark);
