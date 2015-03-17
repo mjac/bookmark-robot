@@ -9,6 +9,10 @@ require(['TagStores/UrlTagStore'], function () {
         testSingleTag('http://GOOGLE.COM/', 'google.com', assert);
 	});
     
+	QUnit.test('Tag has full hostname and subdomain', function (assert) {
+        testMultipleTags('http://drive.google.com/', ['drive.google.com', 'google.com'], assert);
+	});
+    
 	QUnit.test('Localhost maps to own tag', function (assert) {
         testSingleTag('http://localhost/', 'localhost', assert);
 	});
@@ -19,10 +23,15 @@ require(['TagStores/UrlTagStore'], function () {
     
     function testSingleTag(url, expected, assert)
     {
+        testMultipleTags(url, [expected], assert);
+    }
+    
+    function testMultipleTags(url, expected, assert)
+    {
         var done = assert.async();
         
         tagStore.RequestTags(url, function (bookmarkUrl, tags) {
-            assert.deepEqual(tags, [expected]);
+            assert.deepEqual(tags, expected);
             done();
         });
     }
