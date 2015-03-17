@@ -1,43 +1,74 @@
-$(function () {
-	function loadTree() {
-		chrome.bookmarks.getTree(function (bookmarkTree) {
-			var jsTreeJson = mapBookmarksToJstree(bookmarkTree[0].children);
+$(function() {
+	var bookmarkStore;
+	var bookmarkTableView;
+    
+    require([
+        'Bookmark',
+        'Folder',
+        'MultipleAsyncRequest',
+        'BookmarkTableView',
+        'ChromeBookmarkStore',
+        'TagStores/DefaultCompositeTagStore'
+    ], function (
+        bookmarkConstructor,
+        folderConstructor,
+        requestConstructor,
+        bookmarkTableViewConstructor,
+        bookmarkStore,
+        compositeTagStore
+    ) {
+        function readTree(bookmarkTree, bookmarks) {
+            if ('children' in bookmarkTree) {
+                var folder = new folderConstructor(bookmarkTree.title);
+                bookmarks.AddFolder(folder);
+                    
+                readTree(bookmarkTree.children, folder);
+            } else if ($.isArray(bookmarkTree)) {
+                for (localIdx in bookmarkTree) {
+                    var bookmarkChild = bookmarkTree[localIdx];
+                    readTree(bookmarkChild, bookmarks);
+                }
+            } else {
+                var newBookmark = new bookmarkConstructor(bookmarkTree.title, bookmarkTree.url);
+                bookmarks.AddBookmark(newBookmark);
+            }
+        }
 
-			$("#demo1").jstree({ 
-				core: {
-					animation: 0
-				},
-				json_data: {
-					data: jsTreeJson
-				},
-				plugins: [ "themes", "json_data", "ui" ]
-			});
-		});
-	}
-
-	function mapBookmarksToJstree(bookmarkTree) {
-		if ('children' in bookmarkTree) {
-			return {
-				data: bookmarkTree.title,
-				children: mapBookmarksToJstree(bookmarkTree.children)
-			};
-		}
-
-		if ($.isArray(bookmarkTree)) {
-			return bookmarkTree.map(function (bookmarkTree) {
-				return mapBookmarksToJstree(bookmarkTree);
-			});
-		}
-
-		var newBookmark = new Bookmark(bookmarkTree, []);
-
-		return {
-			data: newBookmark.title,
-			metadata: newBookmark
-		};
-	}
-
-	$(document).ready(function () {
-		loadTree();
-	});
+        bookmarkStore.GetBookmarkTree(function (bookmarkTree)
+        {
+            var bookmarkList = [];
+            var bookmarks = new folderConstructor('Root');
+            
+            readTree(bookmarkTree[0].children, bookmarks);
+            console.log(bookmarks);
+            /*AddTags(bookmarkList, function () {
+                console.log(bookmarkList[0]);
+                //setTreeData(bookmarkList.map(treeNode));
+            }.bind(this));*/
+        }.bind(this));
+        
+        function AddTags(bookmarkList, callback) {
+            var request = new requestConstructor();
+            
+            bookmarkList.forEach(function (bookmark) {
+                request.AddRequest(function (requestCallback) {
+                    compositeTagStore.RequestTags(bookmark, function (bookmarkUrl, tags) {
+                        bookmark.tags = tags;
+                        requestCallback();
+                    });
+                });
+            });
+            
+            request.SetFinalCallback(callback);
+            
+            request.Execute();
+        }
+    });
+    
+    function setTreeData(id, data)
+    {
+        $(id).jstree({
+            'core': { 'data': data }
+        });
+    }
 });
