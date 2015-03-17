@@ -1,4 +1,6 @@
 require(['StopWordFilter'], function (filter) {
+    QUnit.module('StopWordFilter');
+    
 	QUnit.test('Single stop word is removed', function (assert) {
         testMultipleWords('a', [], assert);
     });

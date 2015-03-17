@@ -1,4 +1,6 @@
 require(['TagStores/TitleTagStore', 'Bookmark'], function (tagStore, bookmarkConstructor) {
+    QUnit.module('TitleTagStore');
+    
 	QUnit.test('Single word in title becomes tag', function (assert) {
         testSingleTag('coding', 'coding', assert);
 	});

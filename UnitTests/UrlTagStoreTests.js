@@ -1,4 +1,6 @@
 require(['TagStores/UrlTagStore', 'Bookmark'], function (tagStore, bookmarkConstructor) {
+    QUnit.module('UrlTagStore');
+    
 	QUnit.test('Tag is URL hostname', function (assert) {
         testSingleTag('http://google.com/', 'google.com', assert);
 	});
