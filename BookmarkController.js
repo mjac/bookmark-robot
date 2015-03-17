@@ -1,7 +1,0 @@
-function BookmarkController()
-{
-}
-
-BookmarkController.prototype = {
-
-};
