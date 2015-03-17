@@ -10,8 +10,16 @@ define(function () {
             this._bookmarks.push(bookmark);
         },
         
+        GetBookmarks: function () {
+            return this._bookmarks.concat();
+        },
+        
         AddFolder: function (folder) {
             this._folders.push(folder);
+        },
+        
+        GetFolders: function () {
+            return this._folders.concat();
         },
         
         GetAllBookmarks: function (folder) {

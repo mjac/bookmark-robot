@@ -33,6 +33,27 @@ $(function() {
                 bookmarks.AddBookmark(newBookmark);
             }
         }
+        
+        function mapTreeData(folder)
+        {
+            var treeFolder = [];
+            
+            var subFolders = folder.GetFolders();
+            subFolders.forEach(function (folder) {
+                treeFolder.push({
+                    text: folder.title,
+                    state: { opened: false },
+                    children: mapTreeData(folder)
+                });
+            });
+            
+            var subBookmarks = folder.GetBookmarks();
+            subBookmarks.forEach(function (bookmark) {
+                treeFolder.push(bookmark.title);
+            });
+            
+            return treeFolder;
+        }
 
         bookmarkStore.GetBookmarkTree(function (bookmarkTree)
         {
@@ -42,9 +63,10 @@ $(function() {
             readTree(bookmarkTree[0].children, rootFolder);
             
             var bookmarkList = rootFolder.GetAllBookmarks();
-            console.log(bookmarkList[0]);
+            
             AddTags(bookmarkList, function () {
-                //setTreeData(bookmarkList.map(treeNode));
+                var treeData = mapTreeData(rootFolder);
+                setTreeData('#before', treeData);
             }.bind(this));
         }.bind(this));
         
@@ -69,7 +91,7 @@ $(function() {
     function setTreeData(id, data)
     {
         $(id).jstree({
-            'core': { 'data': data }
+            core: { data: data }
         });
     }
 });
