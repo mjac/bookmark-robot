@@ -1,6 +1,4 @@
-require(['StopWordFilter'], function () {
-    var filter = new StopWordFilter();
-    
+require(['StopWordFilter'], function (filter) {
 	QUnit.test('Single stop word is removed', function (assert) {
         testMultipleWords('a', [], assert);
     });
@@ -25,7 +23,6 @@ require(['StopWordFilter'], function () {
     function testMultipleWords(inputText, expectedWords, assert)
     {
         var words = filter.RemoveStopWords(inputText);
-        console.log(inputText, words, expectedWords);
         assert.deepEqual(words, expectedWords);
     }
 });

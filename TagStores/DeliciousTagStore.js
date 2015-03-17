@@ -4,13 +4,13 @@ function DeliciousTagStore(deliciousConfig)
 }
 
 DeliciousTagStore.prototype = {
-	GetTagsForUrl: function (bookmarkUrl, callback)
+	GetTagsForUrl: function (bookmark, callback)
 	{
 		$.ajax({
 			url: this._endpointUrl,
 
 			data: {
-				url: bookmarkUrl
+				url: bookmark.url
 			},
 
 			dataType: 'xml',
@@ -22,7 +22,7 @@ DeliciousTagStore.prototype = {
 					return $(tagContainer).attr('tag');
 				}).get();
 
-				callback(bookmarkUrl, tags);
+				callback(bookmark, tags);
 			}
 		});
 	}

@@ -7,9 +7,10 @@ function CacheTagStore(sourceTagStore, storage)
 }
 
 CacheTagStore.prototype = {
-	RequestTags: function (bookmarkUrl, callback)
+	RequestTags: function (bookmark, callback)
 	{
 		var tags;
+        var bookmarkUrl = bookmark.url;
 
 		if (bookmarkUrl in localStorage) {
 			var tagJson = this.storage[bookmarkUrl];
@@ -25,7 +26,7 @@ CacheTagStore.prototype = {
 
 		this.sourceTagStore.RequestTags(bookmarkUrl, function (tags) {
 			this.storage[bookmarkUrl] = JSON.stringify(tags);
-			callback(bookmarkUrl, tags);
+			callback(bookmark, tags);
 		}.bind(this));
 	},
 	

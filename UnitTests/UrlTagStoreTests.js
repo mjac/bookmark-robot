@@ -1,6 +1,4 @@
-require(['TagStores/UrlTagStore'], function () {
-    var tagStore = new UrlTagStore();
-    
+require(['TagStores/UrlTagStore', 'Bookmark'], function (tagStore, bookmarkConstructor) {
 	QUnit.test('Tag is URL hostname', function (assert) {
         testSingleTag('http://google.com/', 'google.com', assert);
 	});
@@ -38,7 +36,9 @@ require(['TagStores/UrlTagStore'], function () {
     {
         var done = assert.async();
         
-        tagStore.RequestTags(url, function (bookmarkUrl, tags) {
+        var bookmark = new bookmarkConstructor('title', url);
+        
+        tagStore.RequestTags(bookmark, function (bookmark, tags) {
             assert.deepEqual(tags, expected);
             done();
         });

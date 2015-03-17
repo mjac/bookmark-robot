@@ -9,7 +9,7 @@ CompositeTagStore.prototype = {
 		this.tagStores.push(tagStore);
 	},
 	
-	RequestTags: function (bookmarkUrl, callback)
+	RequestTags: function (bookmark, callback)
 	{
 		var allTags = [];
 		
@@ -17,7 +17,7 @@ CompositeTagStore.prototype = {
 				
 		this.tagStores.forEach(function (tagStore) {
 			asyncRequest.AddRequest(function (requestCallback) {
-				tagStore.RequestTags(function (tags) {
+				tagStore.RequestTags(bookmark, function (bookmark, tags) {
 					allTags = allTags.concat(tags);
 					requestCallback();
 				});
@@ -25,7 +25,7 @@ CompositeTagStore.prototype = {
 		});
 		
 		asyncRequest.SetFinalCallback(function () {
-			callback(allTags);
+			callback(bookmark, allTags);
 		});
 	}
 };
