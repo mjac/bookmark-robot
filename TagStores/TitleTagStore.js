@@ -7,7 +7,8 @@ define(['StopWordFilter'], function (stopWordFilter) {
         RequestTags: function (bookmark, callback)
         {
             var normalizedTitle = bookmark.title.toLowerCase();
-            var tags = stopWordFilter.RemoveStopWords(normalizedTitle);
+            var words = normalizedTitle.split(' ');
+            var tags = stopWordFilter.RemoveStopWords(words);
 
             callback(bookmark, tags);
         }

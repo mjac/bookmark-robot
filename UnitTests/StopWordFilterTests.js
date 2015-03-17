@@ -22,7 +22,8 @@ require(['StopWordFilter'], function (filter) {
     
     function testMultipleWords(inputText, expectedWords, assert)
     {
-        var words = filter.RemoveStopWords(inputText);
-        assert.deepEqual(words, expectedWords);
+        var inputWords = inputText.split(' ');
+        var filteredWords = filter.RemoveStopWords(inputWords);
+        assert.deepEqual(filteredWords, expectedWords);
     }
 });

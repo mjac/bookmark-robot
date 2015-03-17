@@ -10,8 +10,8 @@ define(function () {
     }
     
     StopWordFilter.prototype = {
-        RemoveStopWords: function (inputText) {
-            var words = inputText.split(' ').map(function (word) {
+        RemoveStopWords: function (inputWords) {
+            var words = inputWords.map(function (word) {
                 return word.trim();
             }).filter(function (word) {
                 return !(word in this.stopWordMap);
