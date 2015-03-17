@@ -7,7 +7,7 @@ UrlTagStore.prototype = {
 	{
 		var tags = [];
 		
-		var urlMatch = bookmarkUrl.match(/\/\/(?:www\.)?([^/]+)/i);
+		var urlMatch = bookmarkUrl.match(/\/\/(?:www\.)?([^/:]+)/i);
 		
 		if (urlMatch !== null) {
             var hostname = urlMatch[1].toLowerCase();

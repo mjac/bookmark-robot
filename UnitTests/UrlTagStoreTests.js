@@ -21,6 +21,10 @@ require(['TagStores/UrlTagStore'], function () {
         testSingleTag('http://teamcity/', 'intranet', assert);
 	});
     
+	QUnit.test('Port is ignored', function (assert) {
+        testSingleTag('http://google.com:25/', 'google.com', assert);
+	});
+    
     function testSingleTag(url, expected, assert)
     {
         testMultipleTags(url, [expected], assert);
