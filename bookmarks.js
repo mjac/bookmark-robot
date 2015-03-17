@@ -5,21 +5,12 @@ $(document).ready(function() {
     require([
         'BookmarkTableView',
         'ChromeBookmarkStore',
-        'TagStores/CompositeTagStore',
-        'TagStores/UrlTagStore',
-        'TagStores/TitleTagStore'
+        'TagStores/DefaultCompositeTagStore'
     ], function (
         bookmarkTableViewConstructor,
         bookmarkStore,
-        compositeTagStoreConstructor,
-        urlTagStore,
-        titleTagStore
+        compositeTagStore
     ) {
-        var compositeTagStore = new compositeTagStoreConstructor();
-        
-        compositeTagStore.AddTagStore(urlTagStore);
-        compositeTagStore.AddTagStore(titleTagStore);
-        
         bookmarkTableView = new bookmarkTableViewConstructor($('#bookmarksTable'), bookmarkStore, compositeTagStore)
         bookmarkTableView.UpdateTree();
 
