@@ -15,7 +15,7 @@ MultipleAsyncRequest.prototype = {
 
 	Execute: function () {
 		var finalCallback = this.finalCallback;
-		var requestsRemaining = requests.length;
+		var requestsRemaining = this.requests.length;
 		
 		this.requests.forEach(function (request) {
 			request(function () {
