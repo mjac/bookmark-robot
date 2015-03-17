@@ -1,13 +1,31 @@
 $(document).ready(function() {
-	var bookmarkStore = new ChromeBookmarkStore();
-	var bookmarkTableView = new BookmarkTableView($('#bookmarksTable'), bookmarkStore);
-	
-	var bookmarkContentRepository = new RemoteBookmarkContentRepository();
+	var bookmarkStore;
+	var bookmarkTableView;
+    
+    require([
+        'BookmarkTableView',
+        'ChromeBookmarkStore',
+        'TagStores/CompositeTagStore',
+        'TagStores/UrlTagStore',
+        'TagStores/TitleTagStore'
+    ], function (
+        bookmarkTableViewConstructor,
+        bookmarkStore,
+        compositeTagStoreConstructor,
+        urlTagStore,
+        titleTagStore
+    ) {
+        var compositeTagStore = new compositeTagStoreConstructor();
+        
+        compositeTagStore.AddTagStore(urlTagStore);
+        compositeTagStore.AddTagStore(titleTagStore);
+        
+        bookmarkTableView = new bookmarkTableViewConstructor($('#bookmarksTable'), bookmarkStore, compositeTagStore)
+        bookmarkTableView.UpdateTree();
 
-	bookmarkTableView.UpdateTree();
-
-	var select = bookmarkTableView.Select.bind(bookmarkTableView);
-	var performAction = bookmarkTableView.PerformAction.bind(bookmarkTableView);
+        var select = bookmarkTableView.Select.bind(bookmarkTableView);
+        var performAction = bookmarkTableView.PerformAction.bind(bookmarkTableView);
+    });
 
 	$('#actionConnect').on('click', function () {
 		var activeConnect = [];
@@ -19,6 +37,8 @@ $(document).ready(function() {
 		});
 
 		var url = connectList[0].url;
+	
+        var bookmarkContentRepository = new RemoteBookmarkContentRepository();
 		bookmarkContentRepository.GetHTML(url, function (data) {
 			var title = HtmlParser.GetTitle(data);
 			if (title !== null) {
