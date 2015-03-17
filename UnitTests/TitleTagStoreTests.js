@@ -15,6 +15,10 @@ require(['TagStores/TitleTagStore', 'Bookmark'], function (tagStore, bookmarkCon
         testSingleTag('Coding', 'coding', assert);
 	});
     
+	QUnit.test('Punctuation is removed', function (assert) {
+        testSingleTag('coding?', 'coding', assert);
+	});
+    
     function testSingleTag(title, expectedTitle, assert)
     {
         testMultipleTags(title, [expectedTitle], assert);
