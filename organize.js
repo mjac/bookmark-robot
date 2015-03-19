@@ -3,36 +3,20 @@ $(function() {
 	var bookmarkTableView;
     
     require([
-        'Bookmark',
         'Folder',
         'MultipleAsyncRequest',
         'BookmarkTableView',
         'ChromeBookmarkStore',
-        'TagStores/DefaultCompositeTagStore'
+        'TagStores/DefaultCompositeTagStore',
+		'BookmarkTreeReader'
     ], function (
-        bookmarkConstructor,
         folderConstructor,
         requestConstructor,
         bookmarkTableViewConstructor,
         bookmarkStore,
-        compositeTagStore
+        compositeTagStore,
+		bookmarkTreeReader
     ) {
-        function readTree(bookmarkTree, bookmarks) {
-            if ('children' in bookmarkTree) {
-                var folder = new folderConstructor(bookmarkTree.title);
-                bookmarks.AddFolder(folder);
-                    
-                readTree(bookmarkTree.children, folder);
-            } else if ($.isArray(bookmarkTree)) {
-                for (localIdx in bookmarkTree) {
-                    var bookmarkChild = bookmarkTree[localIdx];
-                    readTree(bookmarkChild, bookmarks);
-                }
-            } else {
-                var newBookmark = new bookmarkConstructor(bookmarkTree.title, bookmarkTree.url);
-                bookmarks.AddBookmark(newBookmark);
-            }
-        }
         
         function mapTreeData(folder)
         {
@@ -60,13 +44,17 @@ $(function() {
             var bookmarkList = [];
             var rootFolder = new folderConstructor('Root');
             
-            readTree(bookmarkTree[0].children, rootFolder);
+            bookmarkTreeReader.readTree(bookmarkTree[0].children, rootFolder);
             
             var bookmarkList = rootFolder.GetAllBookmarks();
             
             AddTags(bookmarkList, function () {
                 var treeData = mapTreeData(rootFolder);
                 setTreeData('#before', treeData);
+				
+				var newFolders = constructFolders(bookmarkList);
+                var newTreeData = mapTreeData(newFolders);
+                setTreeData('#after', newTreeData);
             }.bind(this));
         }.bind(this));
         
@@ -86,6 +74,17 @@ $(function() {
             
             request.Execute();
         }
+		
+		function constructFolders(bookmarkList)
+		{
+			var rootNode = new folderConstructor('Root');
+			
+			bookmarkList.forEach(function (bookmark) {
+				rootNode.AddBookmark(bookmark);
+			});
+			
+			return rootNode;
+		}
     });
     
     function setTreeData(id, data)
