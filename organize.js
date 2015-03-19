@@ -3,14 +3,14 @@ $(function() {
 	var bookmarkTableView;
     
     require([
-        'Folder',
+        'RootFolder',
         'MultipleAsyncRequest',
         'BookmarkTableView',
         'ChromeBookmarkStore',
         'TagStores/DefaultCompositeTagStore',
 		'BookmarkTreeReader'
     ], function (
-        folderConstructor,
+        rootFolderConstructor,
         requestConstructor,
         bookmarkTableViewConstructor,
         bookmarkStore,
@@ -42,7 +42,7 @@ $(function() {
         bookmarkStore.GetBookmarkTree(function (bookmarkTree)
         {
             var bookmarkList = [];
-            var rootFolder = new folderConstructor('Root');
+            var rootFolder = new rootFolderConstructor();
             
             bookmarkTreeReader.readTree(bookmarkTree[0].children, rootFolder);
             
@@ -77,7 +77,7 @@ $(function() {
 		
 		function constructFolders(bookmarkList)
 		{
-			var rootNode = new folderConstructor('Root');
+			var rootNode = new rootFolderConstructor();
 			
 			bookmarkList.forEach(function (bookmark) {
 				rootNode.AddBookmark(bookmark);
