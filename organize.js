@@ -5,7 +5,8 @@ require([
     'ChromeBookmarkStore',
     'TagStores/DefaultCompositeTagStore',
     'BookmarkTreeReader',
-    'FolderStrategy/FlatFolderStrategy'
+    'FolderStrategy/FlatFolderStrategy',
+	'BookmarkTreeViewer'
 ], function (
     rootFolderConstructor,
     requestConstructor,
@@ -13,29 +14,9 @@ require([
     bookmarkStore,
     compositeTagStore,
     bookmarkTreeReader,
-    flatFolderStrategy
+    flatFolderStrategy,
+	bookmarkTreeViewerConstructor
 ) {
-    function mapTreeData(folder)
-    {
-        var treeFolder = [];
-        
-        var subFolders = folder.GetFolders();
-        subFolders.forEach(function (folder) {
-            treeFolder.push({
-                text: folder.title,
-                state: { opened: false },
-                children: mapTreeData(folder)
-            });
-        });
-        
-        var subBookmarks = folder.GetBookmarks();
-        subBookmarks.forEach(function (bookmark) {
-            treeFolder.push(bookmark.title);
-        });
-        
-        return treeFolder;
-    }
-
     function AddTags(bookmarkList, callback) {
         var request = new requestConstructor();
         
@@ -52,13 +33,6 @@ require([
         
         request.Execute();
     }
-
-    function setTreeData(id, data)
-    {
-        $(id).jstree({
-            core: { data: data }
-        });
-    }
     
     bookmarkStore.GetBookmarkTree(function (bookmarkTree)
     {
@@ -70,12 +44,12 @@ require([
         var bookmarkList = rootFolder.GetAllBookmarks();
         
         AddTags(bookmarkList, function () {
-            var treeData = mapTreeData(rootFolder);
-            setTreeData('#before', treeData);
-            
+			var beforeTreeViewer = new bookmarkTreeViewerConstructor('#before');
+            beforeTreeViewer.ShowFolder(rootFolder);
+			
+			var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
             var newFolders = flatFolderStrategy.OrganizeIntoFolders(bookmarkList);
-            var newTreeData = mapTreeData(newFolders);
-            setTreeData('#after', newTreeData);
+            afterTreeViewer.ShowFolder(newFolders);
         }.bind(this));
     }.bind(this));
 });
