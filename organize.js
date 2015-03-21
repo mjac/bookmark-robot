@@ -4,14 +4,16 @@ require([
     'BookmarkTableView',
     'ChromeBookmarkStore',
     'TagStores/DefaultCompositeTagStore',
-    'BookmarkTreeReader'
+    'BookmarkTreeReader',
+    'FolderStrategy/FlatFolderStrategy'
 ], function (
     rootFolderConstructor,
     requestConstructor,
     bookmarkTableViewConstructor,
     bookmarkStore,
     compositeTagStore,
-    bookmarkTreeReader
+    bookmarkTreeReader,
+    flatFolderStrategy
 ) {
     function mapTreeData(folder)
     {
@@ -50,17 +52,6 @@ require([
         
         request.Execute();
     }
-    
-    function constructFolders(bookmarkList)
-    {
-        var rootNode = new rootFolderConstructor();
-        
-        bookmarkList.forEach(function (bookmark) {
-            rootNode.AddBookmark(bookmark);
-        });
-        
-        return rootNode;
-    }
 
     function setTreeData(id, data)
     {
@@ -82,7 +73,7 @@ require([
             var treeData = mapTreeData(rootFolder);
             setTreeData('#before', treeData);
             
-            var newFolders = constructFolders(bookmarkList);
+            var newFolders = flatFolderStrategy.OrganizeIntoFolders(bookmarkList);
             var newTreeData = mapTreeData(newFolders);
             setTreeData('#after', newTreeData);
         }.bind(this));
