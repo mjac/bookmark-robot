@@ -10,7 +10,6 @@ define([
     var compositeTagStore = new compositeTagStoreConstructor();
         
     compositeTagStore.AddTagStore(urlTagStore);
-    compositeTagStore.AddTagStore(titleTagStore);
     
     return compositeTagStore;
 });
