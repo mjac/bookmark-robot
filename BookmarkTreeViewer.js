@@ -44,7 +44,7 @@ define(function () {
         $(id).bind("select_node.jstree", function (e, data) {
             var sourceNode = data.node.original;
             if ('url' in sourceNode) {
-                window.location.href = sourceNode.url;
+                window.open(sourceNode.url, '_blank');
             }
         }) ;
     }
