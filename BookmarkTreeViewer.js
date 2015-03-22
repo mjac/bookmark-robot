@@ -25,7 +25,11 @@ define(function () {
         
         var subBookmarks = folder.GetBookmarks();
         subBookmarks.forEach(function (bookmark) {
-            treeFolder.push(bookmark.title);
+            var treeBookmark = {
+                text: bookmark.title,
+                url: bookmark.url
+            };
+            treeFolder.push(treeBookmark);
         });
         
         return treeFolder;
@@ -36,6 +40,13 @@ define(function () {
         $(id).jstree({
             core: { data: data }
         });
+        
+        $(id).bind("select_node.jstree", function (e, data) {
+            var sourceNode = data.node.original;
+            if ('url' in sourceNode) {
+                window.location.href = sourceNode.url;
+            }
+        }) ;
     }
     
     return BookmarkTreeViewer;
