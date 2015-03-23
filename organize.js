@@ -5,7 +5,7 @@ require([
     'ChromeBookmarkStore',
     'TagStores/DefaultCompositeTagStore',
     'BookmarkTreeReader',
-	'FolderStrategy/SortedFolderStrategy',
+	'FolderSorter',
     'FolderStrategy/GreedyFolderStrategy',
 	'BookmarkTreeViewer'
 ], function (
@@ -15,7 +15,7 @@ require([
     bookmarkStore,
     compositeTagStore,
     bookmarkTreeReader,
-    sortedStrategyConstructor,
+    folderSorter,
     folderStrategy,
 	bookmarkTreeViewerConstructor
 ) {
@@ -50,8 +50,8 @@ require([
             beforeTreeViewer.ShowFolder(rootFolder);
 			
 			var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
-			var sortedStrategy = new sortedStrategyConstructor(folderStrategy);
-            var newFolders = sortedStrategy.OrganizeIntoFolders(bookmarkList);
+            var newFolders = folderStrategy.OrganizeIntoFolders(bookmarkList);
+			folderSorter(newFolders);
             afterTreeViewer.ShowFolder(newFolders);
         }.bind(this));
     }.bind(this));
