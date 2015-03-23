@@ -24,7 +24,7 @@ define(['RootFolder', 'Folder', 'PropertySort'], function (rootFolderConstructor
 		for (var tag in tags) {
 			var tagLength = tags[tag].length;
 			if (tagLength >= minBookmarksPerFolder) {
-				tagFrequency.push([tag, tags[tag].length]);
+				tagFrequency.push([tag, tagLength]);
 			}
 		}
 		
