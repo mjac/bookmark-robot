@@ -1,37 +1,43 @@
 require([
     'RootFolder',
+    'Folder',
     'MultipleAsyncRequest',
     'BookmarkTableView',
     'ChromeBookmarkStore',
-    'TagStores/DefaultCompositeTagStore',
+    'TagStores/UrlTagStore',
     'BookmarkTreeReader',
-	'FolderSorter',
+    'FolderSorter',
     'FolderStrategy/GreedyFolderStrategy',
-	'BookmarkTreeViewer'
+    'BookmarkTreeViewer'
 ], function (
     rootFolderConstructor,
+    folderConstructor,
     requestConstructor,
     bookmarkTableViewConstructor,
     bookmarkStore,
-    compositeTagStore,
+    urlTagStore,
     bookmarkTreeReader,
     folderSorter,
     folderStrategy,
-	bookmarkTreeViewerConstructor
+    bookmarkTreeViewerConstructor
 ) {
-    function AddTags(bookmarkList, callback) {
+    function AddTags(bookmarkList, tagStore, callback) {
         var request = new requestConstructor();
+        
+        var bookmarkToTagMap = {};
         
         bookmarkList.forEach(function (bookmark) {
             request.AddRequest(function (requestCallback) {
-                compositeTagStore.RequestTags(bookmark, function (bookmarkUrl, tags) {
-                    bookmark.tags = tags;
+                urlTagStore.RequestTags(bookmark, function (bookmarkUrl, tags) {
+                    bookmarkToTagMap[bookmark.id] = tags;
                     requestCallback();
                 });
             });
         });
         
-        request.SetFinalCallback(callback);
+        request.SetFinalCallback(function () {
+            callback(bookmarkToTagMap);
+        });
         
         request.Execute();
     }
@@ -39,20 +45,32 @@ require([
     bookmarkStore.GetBookmarkTree(function (bookmarkTree)
     {
         var bookmarkList = [];
-        var rootFolder = new rootFolderConstructor();
         
-        bookmarkTreeReader.readTree(bookmarkTree[0].children, rootFolder);
+        var beforeRootFolder = new rootFolderConstructor();
+        bookmarkTreeReader.readTree(bookmarkTree[0].children, beforeRootFolder);
         
-        var bookmarkList = rootFolder.GetAllBookmarks();
+        var beforeTreeViewer = new bookmarkTreeViewerConstructor('#before');
+        beforeTreeViewer.ShowFolder(beforeRootFolder);
+            
+        var afterRootFolder = new rootFolderConstructor();
+        var bookmarkList = beforeRootFolder.GetAllBookmarks();
         
-        AddTags(bookmarkList, function () {
-			var beforeTreeViewer = new bookmarkTreeViewerConstructor('#before');
-            beforeTreeViewer.ShowFolder(rootFolder);
-			
-			var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
-            var newFolders = folderStrategy.OrganizeIntoFolders(bookmarkList);
-			folderSorter(newFolders);
-            afterTreeViewer.ShowFolder(newFolders);
+        AddTags(bookmarkList, urlTagStore, function (bookmarkToTagMap) {
+            var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
+            
+            var newFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
+            newFolder.title = 'Websites';
+            afterRootFolder.AddFolder(newFolder);
+            
+            var unsortedFolder = new folderConstructor('Unsorted');
+            
+            unsortedFolder._bookmarks = unsortedFolder._bookmarks.concat(newFolder._bookmarks);
+            newFolder._bookmarks = [];
+            
+            afterRootFolder.AddFolder(unsortedFolder);
+                        
+            folderSorter(afterRootFolder);
+            afterTreeViewer.ShowFolder(afterRootFolder);
         }.bind(this));
     }.bind(this));
 });

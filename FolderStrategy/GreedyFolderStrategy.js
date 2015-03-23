@@ -5,13 +5,14 @@ define(['RootFolder', 'Folder', 'PropertySort'], function (rootFolderConstructor
     {
     }
 	
-	GreedyFolderStrategy.prototype.OrganizeIntoFolders = function (bookmarkList) {
+	GreedyFolderStrategy.prototype.OrganizeIntoFolders = function (bookmarkList, bookmarkToTagMap) {
         var rootFolder = new rootFolderConstructor();
         
 		var tags = {};
 		
         bookmarkList.forEach(function (bookmark) {
-            bookmark.tags.forEach(function (tag) {
+			var bookmarkTags = bookmarkToTagMap[bookmark.id];
+            bookmarkTags.forEach(function (tag) {
 				if (!(tag in tags)) {
 					tags[tag] = [];
 				}
