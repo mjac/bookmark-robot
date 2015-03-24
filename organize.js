@@ -5,6 +5,7 @@ require([
     'BookmarkTableView',
     'ChromeBookmarkStore',
     'TagStores/UrlTagStore',
+    'TagStores/IntranetTagStore',
     'BookmarkTreeReader',
     'FolderSorter',
     'FolderStrategy/GreedyFolderStrategy',
@@ -16,6 +17,7 @@ require([
     bookmarkTableViewConstructor,
     bookmarkStore,
     urlTagStore,
+    intranetTagStore,
     bookmarkTreeReader,
     folderSorter,
     folderStrategy,
@@ -28,7 +30,7 @@ require([
         
         bookmarkList.forEach(function (bookmark) {
             request.AddRequest(function (requestCallback) {
-                urlTagStore.RequestTags(bookmark, function (bookmarkUrl, tags) {
+                tagStore.RequestTags(bookmark, function (bookmarkUrl, tags) {
                     bookmarkToTagMap[bookmark.id] = tags;
                     requestCallback();
                 });
@@ -55,22 +57,31 @@ require([
         var afterRootFolder = new rootFolderConstructor();
         var bookmarkList = beforeRootFolder.GetAllBookmarks();
         
-        AddTags(bookmarkList, urlTagStore, function (bookmarkToTagMap) {
-            var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
+        AddTags(bookmarkList, intranetTagStore, function (bookmarkToTagMap) {
+			var intranetFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
+			
+			intranetFolder.title = 'Local Domains';
+			afterRootFolder.AddFolder(intranetFolder);
             
-            var newFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
-            newFolder.title = 'Websites';
-            afterRootFolder.AddFolder(newFolder);
-            
-            var unsortedFolder = new folderConstructor('Unsorted');
-            
-            unsortedFolder._bookmarks = unsortedFolder._bookmarks.concat(newFolder._bookmarks);
-            newFolder._bookmarks = [];
-            
-            afterRootFolder.AddFolder(unsortedFolder);
-                        
-            folderSorter(afterRootFolder);
-            afterTreeViewer.ShowFolder(afterRootFolder);
-        }.bind(this));
+			AddTags(intranetFolder._bookmarks, urlTagStore, function (bookmarkToTagMap) {
+				var newFolder = folderStrategy.OrganizeIntoFolders(intranetFolder._bookmarks, bookmarkToTagMap);
+				intranetFolder._bookmarks = [];
+					
+				newFolder.title = 'Websites';
+				afterRootFolder.AddFolder(newFolder);
+				
+				var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
+				
+				var unsortedFolder = new folderConstructor('Unsorted');
+				
+				unsortedFolder._bookmarks = unsortedFolder._bookmarks.concat(newFolder._bookmarks);
+				newFolder._bookmarks = [];
+				
+				afterRootFolder.AddFolder(unsortedFolder);
+							
+				folderSorter(afterRootFolder);
+				afterTreeViewer.ShowFolder(afterRootFolder);
+			}.bind(this));
+		});
     }.bind(this));
 });
