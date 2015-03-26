@@ -52,16 +52,17 @@ require([
         var beforeTreeViewer = new bookmarkTreeViewerConstructor('#before');
         beforeTreeViewer.ShowFolder(beforeRootFolder);
 		
-        var afterRootFolder = new rootFolderConstructor();
         var bookmarkList = beforeRootFolder.GetAllBookmarks();
+		
+        var afterRootFolder = new rootFolderConstructor();
 		
 		afterRootFolder.AddFolder(organize('Files', fileTagStore, bookmarkList));
 		afterRootFolder.AddFolder(organize('Local Domains', intranetTagStore, bookmarkList));
 		afterRootFolder.AddFolder(organize('Websites', urlTagStore, bookmarkList));
 		
-		var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
-					
 		folderSorter(afterRootFolder);
+		
+		var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
 		afterTreeViewer.ShowFolder(afterRootFolder);
     }.bind(this));
 });
