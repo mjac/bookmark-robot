@@ -6,6 +6,7 @@ require([
     'ChromeBookmarkStore',
     'TagStores/UrlTagStore',
     'TagStores/IntranetTagStore',
+    'TagStores/FileTagStore',
     'BookmarkTreeReader',
     'FolderSorter',
     'FolderStrategy/GreedyFolderStrategy',
@@ -18,6 +19,7 @@ require([
     bookmarkStore,
     urlTagStore,
     intranetTagStore,
+    fileTagStore,
     bookmarkTreeReader,
     folderSorter,
     folderStrategy,
@@ -56,32 +58,40 @@ require([
             
         var afterRootFolder = new rootFolderConstructor();
         var bookmarkList = beforeRootFolder.GetAllBookmarks();
-        
-        AddTags(bookmarkList, intranetTagStore, function (bookmarkToTagMap) {
-			var intranetFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
+		
+        AddTags(bookmarkList, fileTagStore, function (bookmarkToTagMap) {
+			var fileFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
 			
-			intranetFolder.title = 'Local Domains';
-			afterRootFolder.AddFolder(intranetFolder);
-            
-			AddTags(intranetFolder._bookmarks, urlTagStore, function (bookmarkToTagMap) {
-				var newFolder = folderStrategy.OrganizeIntoFolders(intranetFolder._bookmarks, bookmarkToTagMap);
-				intranetFolder._bookmarks = [];
+			fileFolder.title = 'Files';
+			afterRootFolder.AddFolder(fileFolder);
+        
+			AddTags(fileFolder._bookmarks, intranetTagStore, function (bookmarkToTagMap) {
+				var intranetFolder = folderStrategy.OrganizeIntoFolders(fileFolder._bookmarks, bookmarkToTagMap);
+				fileFolder._bookmarks = [];
+				
+				intranetFolder.title = 'Local Domains';
+				afterRootFolder.AddFolder(intranetFolder);
+				
+				AddTags(intranetFolder._bookmarks, urlTagStore, function (bookmarkToTagMap) {
+					var newFolder = folderStrategy.OrganizeIntoFolders(intranetFolder._bookmarks, bookmarkToTagMap);
+					intranetFolder._bookmarks = [];
+						
+					newFolder.title = 'Websites';
+					afterRootFolder.AddFolder(newFolder);
 					
-				newFolder.title = 'Websites';
-				afterRootFolder.AddFolder(newFolder);
-				
-				var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
-				
-				var unsortedFolder = new folderConstructor('Unsorted');
-				
-				unsortedFolder._bookmarks = unsortedFolder._bookmarks.concat(newFolder._bookmarks);
-				newFolder._bookmarks = [];
-				
-				afterRootFolder.AddFolder(unsortedFolder);
-							
-				folderSorter(afterRootFolder);
-				afterTreeViewer.ShowFolder(afterRootFolder);
-			}.bind(this));
+					var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
+					
+					var unsortedFolder = new folderConstructor('Unsorted');
+					
+					unsortedFolder._bookmarks = unsortedFolder._bookmarks.concat(newFolder._bookmarks);
+					newFolder._bookmarks = [];
+					
+					afterRootFolder.AddFolder(unsortedFolder);
+								
+					folderSorter(afterRootFolder);
+					afterTreeViewer.ShowFolder(afterRootFolder);
+				}.bind(this));
+			});
 		});
     }.bind(this));
 });
