@@ -37,9 +37,6 @@ require([
     
     bookmarkStore.GetBookmarkTree(function (bookmarkTree)
     {
-        var bookmarkList = [];
-        var bookmarkToTagMap;
-		
         var beforeRootFolder = new rootFolderConstructor();
         bookmarkTreeReader.readTree(bookmarkTree[0].children, beforeRootFolder);
         
@@ -49,20 +46,20 @@ require([
         var afterRootFolder = new rootFolderConstructor();
         var bookmarkList = beforeRootFolder.GetAllBookmarks();
 		
-        bookmarkToTagMap = AddTags(bookmarkList, fileTagStore);
-		var fileFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
+        var fileTagMap = AddTags(bookmarkList, fileTagStore);
+		var fileFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, fileTagMap);
 		
 		fileFolder.title = 'Files';
 		afterRootFolder.AddFolder(fileFolder);
         
-		bookmarkToTagMap = AddTags(bookmarkList, intranetTagStore);
-		var intranetFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
+		var intranetTagMap = AddTags(bookmarkList, intranetTagStore);
+		var intranetFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, intranetTagMap);
 		
 		intranetFolder.title = 'Local Domains';
 		afterRootFolder.AddFolder(intranetFolder);
 		
-		bookmarkToTagMap = AddTags(bookmarkList, urlTagStore);
-		var newFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
+		var urlTagMap = AddTags(bookmarkList, urlTagStore);
+		var newFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, urlTagMap);
 			
 		newFolder.title = 'Websites';
 		afterRootFolder.AddFolder(newFolder);
