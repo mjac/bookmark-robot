@@ -24,7 +24,7 @@ define(function () {
                 }
             }
 
-            callback(bookmark, tags);
+            return tags;
         },
         
         _getHostnameTags: function (hostname)

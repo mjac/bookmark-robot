@@ -18,7 +18,7 @@ define(function () {
                 }
             }
 
-            callback(bookmark, tags);
+            return tags;
         }
     }
     

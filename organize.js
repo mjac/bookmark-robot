@@ -26,30 +26,20 @@ require([
     bookmarkTreeViewerConstructor
 ) {
     function AddTags(bookmarkList, tagStore, callback) {
-        var request = new requestConstructor();
-        
         var bookmarkToTagMap = {};
         
         bookmarkList.forEach(function (bookmark) {
-            request.AddRequest(function (requestCallback) {
-                tagStore.RequestTags(bookmark, function (bookmarkUrl, tags) {
-                    bookmarkToTagMap[bookmark.id] = tags;
-                    requestCallback();
-                });
-            });
+			bookmarkToTagMap[bookmark.id] = tagStore.RequestTags(bookmark);
         });
-        
-        request.SetFinalCallback(function () {
-            callback(bookmarkToTagMap);
-        });
-        
-        request.Execute();
+		
+		return bookmarkToTagMap;
     }
     
     bookmarkStore.GetBookmarkTree(function (bookmarkTree)
     {
         var bookmarkList = [];
-        
+        var bookmarkToTagMap;
+		
         var beforeRootFolder = new rootFolderConstructor();
         bookmarkTreeReader.readTree(bookmarkTree[0].children, beforeRootFolder);
         
@@ -59,39 +49,27 @@ require([
         var afterRootFolder = new rootFolderConstructor();
         var bookmarkList = beforeRootFolder.GetAllBookmarks();
 		
-        AddTags(bookmarkList, fileTagStore, function (bookmarkToTagMap) {
-			var fileFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
-			
-			fileFolder.title = 'Files';
-			afterRootFolder.AddFolder(fileFolder);
+        bookmarkToTagMap = AddTags(bookmarkList, fileTagStore);
+		var fileFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
+		
+		fileFolder.title = 'Files';
+		afterRootFolder.AddFolder(fileFolder);
         
-			AddTags(fileFolder._bookmarks, intranetTagStore, function (bookmarkToTagMap) {
-				var intranetFolder = folderStrategy.OrganizeIntoFolders(fileFolder._bookmarks, bookmarkToTagMap);
-				fileFolder._bookmarks = [];
-				
-				intranetFolder.title = 'Local Domains';
-				afterRootFolder.AddFolder(intranetFolder);
-				
-				AddTags(intranetFolder._bookmarks, urlTagStore, function (bookmarkToTagMap) {
-					var newFolder = folderStrategy.OrganizeIntoFolders(intranetFolder._bookmarks, bookmarkToTagMap);
-					intranetFolder._bookmarks = [];
-						
-					newFolder.title = 'Websites';
-					afterRootFolder.AddFolder(newFolder);
+		bookmarkToTagMap = AddTags(bookmarkList, intranetTagStore);
+		var intranetFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
+		
+		intranetFolder.title = 'Local Domains';
+		afterRootFolder.AddFolder(intranetFolder);
+		
+		bookmarkToTagMap = AddTags(bookmarkList, urlTagStore);
+		var newFolder = folderStrategy.OrganizeIntoFolders(bookmarkList, bookmarkToTagMap);
+			
+		newFolder.title = 'Websites';
+		afterRootFolder.AddFolder(newFolder);
+		
+		var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
 					
-					var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
-					
-					var unsortedFolder = new folderConstructor('Unsorted');
-					
-					unsortedFolder._bookmarks = unsortedFolder._bookmarks.concat(newFolder._bookmarks);
-					newFolder._bookmarks = [];
-					
-					afterRootFolder.AddFolder(unsortedFolder);
-								
-					folderSorter(afterRootFolder);
-					afterTreeViewer.ShowFolder(afterRootFolder);
-				}.bind(this));
-			});
-		});
+		folderSorter(afterRootFolder);
+		afterTreeViewer.ShowFolder(afterRootFolder);
     }.bind(this));
 });

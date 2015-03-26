@@ -20,7 +20,7 @@ define(['StopWordFilter'], function (stopWordFilter) {
             
             var tags = stopWordFilter.RemoveStopWords(words);
 
-            callback(bookmark, tags);
+            return tags;
         }
     }
     
