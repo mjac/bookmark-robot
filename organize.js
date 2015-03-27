@@ -25,23 +25,29 @@ require([
     folderStrategy,
     bookmarkTreeViewerConstructor
 ) {
-    function AddTags(bookmarkList, tagStore, callback) {
-        var bookmarkToTagMap = {};
-        
+	function Organize(title, tagStore, bookmarkList) {
+        var tagMap = {};
+		
+        var sortedBookmarks = [];
+        var unsortedBookmarks = [];
+		
         bookmarkList.forEach(function (bookmark) {
-			bookmarkToTagMap[bookmark.id] = tagStore.RequestTags(bookmark);
+			var tags = tagStore.RequestTags(bookmark);
+			if (tags.length > 0) {
+				tagMap[bookmark.id] = tags;
+				sortedBookmarks.push(bookmark);
+			} else {
+				unsortedBookmarks.push(bookmark);
+			}
         });
 		
-		return bookmarkToTagMap;
-    }
-    
-	function organize(title, tagStore, bookmarkList) {
-		var tagMap = AddTags(bookmarkList, tagStore);
-		
-		var folder = folderStrategy.OrganizeIntoFolders(bookmarkList, tagMap);
+		var folder = folderStrategy.OrganizeIntoFolders(sortedBookmarks, tagMap);
 		folder.title = title;
 		
-		return folder;
+		return {
+			Folder: folder,
+			UnsortedBookmarks: unsortedBookmarks
+		};
 	}
 	
     bookmarkStore.GetBookmarkTree(function (bookmarkTree)
@@ -56,9 +62,16 @@ require([
 		
         var afterRootFolder = new rootFolderConstructor();
 		
-		afterRootFolder.AddFolder(organize('Files', fileTagStore, bookmarkList));
-		afterRootFolder.AddFolder(organize('Local Domains', intranetTagStore, bookmarkList));
-		afterRootFolder.AddFolder(organize('Websites', urlTagStore, bookmarkList));
+		var fileFolder = Organize('Files', fileTagStore, bookmarkList);
+		afterRootFolder.AddFolder(fileFolder.Folder);
+		
+		var intranetFolder = Organize('Local Domains', intranetTagStore, fileFolder.UnsortedBookmarks);
+		afterRootFolder.AddFolder(intranetFolder.Folder);
+		
+		// Need to adapt this to remove unsorted bookmarks in the root directory
+		// Allow bookmarks in base directory = false
+		var websiteFolder = Organize('Websites', urlTagStore, intranetFolder.UnsortedBookmarks);
+		afterRootFolder.AddFolder(websiteFolder.Folder);
 		
 		folderSorter(afterRootFolder);
 		
