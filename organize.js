@@ -25,7 +25,7 @@ require([
     folderStrategy,
     bookmarkTreeViewerConstructor
 ) {
-	function Organize(title, tagStore, bookmarkList) {
+	function Organize(title, tagStore, bookmarkList, forceEmptyRoot) {
         var tagMap = {};
 		
         var sortedBookmarks = [];
@@ -43,6 +43,11 @@ require([
 		
 		var folder = folderStrategy.OrganizeIntoFolders(sortedBookmarks, tagMap);
 		folder.title = title;
+		
+		if (forceEmptyRoot) {
+			unsortedBookmarks = unsortedBookmarks.concat(folder._bookmarks);
+			folder._bookmarks = [];
+		}
 		
 		return {
 			Folder: folder,
@@ -68,10 +73,12 @@ require([
 		var intranetFolder = Organize('Local Domains', intranetTagStore, fileFolder.UnsortedBookmarks);
 		afterRootFolder.AddFolder(intranetFolder.Folder);
 		
-		// Need to adapt this to remove unsorted bookmarks in the root directory
-		// Allow bookmarks in base directory = false
-		var websiteFolder = Organize('Websites', urlTagStore, intranetFolder.UnsortedBookmarks);
+		var websiteFolder = Organize('Websites', urlTagStore, intranetFolder.UnsortedBookmarks, true);
 		afterRootFolder.AddFolder(websiteFolder.Folder);
+		
+		var unsortedFolder = new folderConstructor('Unsorted');
+		unsortedFolder._bookmarks = websiteFolder.UnsortedBookmarks;
+		afterRootFolder.AddFolder(unsortedFolder);
 		
 		folderSorter(afterRootFolder);
 		
