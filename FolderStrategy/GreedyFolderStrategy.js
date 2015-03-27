@@ -45,7 +45,7 @@ define(['RootFolder', 'Folder', 'PropertySort'], function (rootFolderConstructor
 				}
 			});
 			
-			if (tagFolder.GetBookmarks().length > 0) {
+			if (tagFolder.GetBookmarks().length > minBookmarksPerFolder) {
 				rootFolder.AddFolder(tagFolder);
 			}
 			
