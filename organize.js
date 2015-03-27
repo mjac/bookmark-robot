@@ -7,6 +7,7 @@ require([
     'TagStores/UrlTagStore',
     'TagStores/IntranetTagStore',
     'TagStores/FileTagStore',
+    'TagStores/TitleTagStore',
     'BookmarkTreeReader',
     'FolderSorter',
     'FolderStrategy/GreedyFolderStrategy',
@@ -20,6 +21,7 @@ require([
     urlTagStore,
     intranetTagStore,
     fileTagStore,
+    titleTagStore,
     bookmarkTreeReader,
     folderSorter,
     folderStrategy,
@@ -76,8 +78,11 @@ require([
 		var websiteFolder = Organize('Websites', urlTagStore, intranetFolder.UnsortedBookmarks, true);
 		afterRootFolder.AddFolder(websiteFolder.Folder);
 		
+		var titleFolder = Organize('Category', titleTagStore, websiteFolder.UnsortedBookmarks, true);
+		afterRootFolder.AddFolder(titleFolder.Folder);
+		
 		var unsortedFolder = new folderConstructor('Unsorted');
-		unsortedFolder._bookmarks = websiteFolder.UnsortedBookmarks;
+		unsortedFolder._bookmarks = titleFolder.UnsortedBookmarks;
 		afterRootFolder.AddFolder(unsortedFolder);
 		
 		folderSorter(afterRootFolder);
