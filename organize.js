@@ -56,6 +56,13 @@ require([
 			UnsortedBookmarks: unsortedBookmarks
 		};
 	}
+
+	function TryCategorize(title, tagStore, bookmarkList, afterRootFolder, forceEmptyRoot) {
+		var fileFolder = Organize(title, tagStore, bookmarkList, forceEmptyRoot);
+		afterRootFolder.AddFolder(fileFolder.Folder);
+
+		return fileFolder.UnsortedBookmarks;
+	}
 	
     bookmarkStore.GetBookmarkTree(function (bookmarkTree)
     {
@@ -68,21 +75,14 @@ require([
         var bookmarkList = beforeRootFolder.GetAllBookmarks();
 		
         var afterRootFolder = new rootFolderConstructor();
-		
-		var fileFolder = Organize('Files', fileTagStore, bookmarkList);
-		afterRootFolder.AddFolder(fileFolder.Folder);
-		
-		var intranetFolder = Organize('Intranet', intranetTagStore, fileFolder.UnsortedBookmarks);
-		afterRootFolder.AddFolder(intranetFolder.Folder);
-		
-		var websiteFolder = Organize('Websites', urlTagStore, intranetFolder.UnsortedBookmarks, true);
-		afterRootFolder.AddFolder(websiteFolder.Folder);
-		
-		var titleFolder = Organize('Category', titleTagStore, websiteFolder.UnsortedBookmarks, true);
-		afterRootFolder.AddFolder(titleFolder.Folder);
+
+		bookmarkList = TryCategorize('Files', fileTagStore, bookmarkList, afterRootFolder);
+		bookmarkList = TryCategorize('Intranet', intranetTagStore, bookmarkList, afterRootFolder);
+		bookmarkList = TryCategorize('Websites', urlTagStore, bookmarkList, afterRootFolder, true);
+		bookmarkList = TryCategorize('Category', titleTagStore, bookmarkList, afterRootFolder, true);
 		
 		var unsortedFolder = new folderConstructor('Unsorted');
-		unsortedFolder._bookmarks = titleFolder.UnsortedBookmarks;
+		unsortedFolder._bookmarks = bookmarkList;
 		afterRootFolder.AddFolder(unsortedFolder);
 		
 		folderSorter(afterRootFolder);
