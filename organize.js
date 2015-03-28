@@ -72,7 +72,7 @@ require([
 		var fileFolder = Organize('Files', fileTagStore, bookmarkList);
 		afterRootFolder.AddFolder(fileFolder.Folder);
 		
-		var intranetFolder = Organize('Local Domains', intranetTagStore, fileFolder.UnsortedBookmarks);
+		var intranetFolder = Organize('Intranet', intranetTagStore, fileFolder.UnsortedBookmarks);
 		afterRootFolder.AddFolder(intranetFolder.Folder);
 		
 		var websiteFolder = Organize('Websites', urlTagStore, intranetFolder.UnsortedBookmarks, true);
