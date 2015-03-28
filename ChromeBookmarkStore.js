@@ -66,6 +66,32 @@ define(function () {
             });
 		},
 
+		RemoveDuplicates: function () {
+			var urls = {};
+
+			function removeAll(bookmarkTree, hierarchy) {
+				if ('url' in bookmarkTree) {
+					if (bookmarkTree.url in urls) {
+						chrome.bookmarks.remove(bookmarkTree.id);
+					} else {
+						urls[bookmarkTree.url] = hierarchy;
+					}
+					return;
+				}
+
+				if (bookmarkTree.children && bookmarkTree.children.length > 0) {
+					bookmarkTree.children.forEach(function (bookmarkTree) {
+						removeAll(bookmarkTree, hierarchy.concat([bookmarkTree.title]));
+					});
+					return;
+				}
+			}
+
+            chrome.bookmarks.getTree(function (bookmarkTree) {
+				removeAll(bookmarkTree[0], []);
+            });
+		},
+
 		CreateHierarchy: function (folder) {
 			var store = this;
 

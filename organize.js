@@ -100,5 +100,9 @@ require([
 		$('#RemoveEmpty').click(function () {
 			bookmarkStore.RemoveEmptyFolders();
 		});
+
+		$('#RemoveDuplicates').click(function () {
+			bookmarkStore.RemoveDuplicates();
+		});
     }.bind(this));
 });
