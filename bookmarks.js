@@ -1,11 +1,15 @@
 require([
 	'BookmarkTableView',
 	'ChromeBookmarkStore',
-	'TagStores/DefaultCompositeTagStore'
+	'TagStores/DefaultCompositeTagStore',
+	'BookmarkContentRepository',
+	'HtmlParser'
 ], function (
 	bookmarkTableViewConstructor,
 	bookmarkStore,
-	compositeTagStore
+	compositeTagStore,
+	bookmarkContentRepository,
+	htmlParser
 ) {
 	bookmarkTableView = new bookmarkTableViewConstructor($('#bookmarksTable'), bookmarkStore, compositeTagStore)
 	bookmarkTableView.UpdateTree();
@@ -24,9 +28,8 @@ require([
 
 		var url = connectList[0].url;
 	
-        var bookmarkContentRepository = new RemoteBookmarkContentRepository();
 		bookmarkContentRepository.GetHTML(url, function (data) {
-			var title = HtmlParser.GetTitle(data);
+			var title = htmlParser.GetTitle(data);
 			if (title !== null) {
 				console.log(title);		
 			}
