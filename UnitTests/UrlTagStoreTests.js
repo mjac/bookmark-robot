@@ -36,13 +36,9 @@ require(['TagStores/UrlTagStore', 'Bookmark'], function (tagStore, bookmarkConst
     
     function testMultipleTags(url, expected, assert)
     {
-        var done = assert.async();
-        
         var bookmark = new bookmarkConstructor('title', url);
         
-        tagStore.RequestTags(bookmark, function (bookmark, tags) {
-            assert.deepEqual(tags, expected);
-            done();
-        });
+        var tags = tagStore.RequestTags(bookmark);
+		assert.deepEqual(tags, expected);
     }
 });
