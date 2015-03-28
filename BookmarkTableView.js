@@ -1,4 +1,4 @@
-define(['Bookmark', 'MultipleAsyncRequest'], function (bookmarkConstructor, requestConstructor) {
+define(['Bookmark', 'MultipleAsyncRequest', 'BookmarkTreeReader', 'RootFolder'], function (bookmarkConstructor, requestConstructor, bookmarkTreeReader, rootFolderConstructor) {
     function BookmarkTableView(tableNode, bookmarkStore, tagStore)
     {
         this.tableNode = tableNode;
@@ -12,34 +12,14 @@ define(['Bookmark', 'MultipleAsyncRequest'], function (bookmarkConstructor, requ
     BookmarkTableView.prototype = {
         UpdateTree: function()
         {
-            function readTree(bookmarkTree, hierarchy, bookmarks) {
-                if ('children' in bookmarkTree) {
-                    var subHierarchy = hierarchy.concat([bookmarkTree.title]);
-                    readTree(bookmarkTree.children, subHierarchy, bookmarks);
-                } else if ($.isArray(bookmarkTree)) {
-                    for (localIdx in bookmarkTree) {
-                        var folder = bookmarkTree[localIdx];
-                        readTree(folder, hierarchy, bookmarks);
-                    }
-                } else {
-                    var newBookmark = new bookmarkConstructor(bookmarkTree.title, bookmarkTree.url);
-
-                    var onlyHttp = true;
-
-                    if (!onlyHttp || /^http/.test(newBookmark.url) && !/(\/\/localhost|\.pdf$)/.test(newBookmark.url)) {
-                        bookmarks.push(newBookmark);
-                    }
-                }
-            }
-
             this.bookmarkStore.GetBookmarkTree(function (bookmarkTree)
             {
-                this.bookmarkList = [];
-                readTree(bookmarkTree[0].children, [], this.bookmarkList);
-                
-                this.AddTags(function () {
-                    this.WriteTree();
-                }.bind(this));
+				var folder = new rootFolderConstructor();
+                bookmarkTreeReader.readTree(bookmarkTree[0].children, folder);
+
+				this.bookmarkList = folder.GetAllBookmarks();
+
+				this.WriteTree();
             }.bind(this));
         },
 
@@ -52,29 +32,9 @@ define(['Bookmark', 'MultipleAsyncRequest'], function (bookmarkConstructor, requ
                 var bookmarkRow = this.tableBody.append('<tr data-id="' + bookmarkIdx + 
                     '"><td class="select"><input type="checkbox" value="' + bookmarkIdx + 
                     '" /></td><td class="title"><a>' + bookmark.title + 
-                    '</a></td><td class="tags">' + bookmark.tags + 
-                    '</td><td class="url"><a>' + bookmark.url + 
+                    '</a></td><td class="url"><a>' + bookmark.url + 
                     '</a></td></tr>');
             }
-        },
-        
-        AddTags: function (callback) {
-            var request = new requestConstructor();
-            
-            var tagStore = this.tagStore;
-            
-            this.bookmarkList.forEach(function (bookmark) {
-                request.AddRequest(function (requestCallback) {
-                    tagStore.RequestTags(bookmark, function (bookmarkUrl, tags) {
-                        bookmark.tags = tags;
-                        requestCallback();
-                    });
-                });
-            });
-            
-            request.SetFinalCallback(callback);
-            
-            request.Execute();
         },
 
         UpdateTable: function(bookmark) {
