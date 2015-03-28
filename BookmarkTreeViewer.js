@@ -7,14 +7,14 @@ define(function () {
     
     BookmarkTreeViewer.prototype.ShowFolder = function (rootFolder)
     {
-        var treeData = mapTreeData(rootFolder);
+        var treeData = this._mapTreeData(rootFolder);
         setTreeData(this.id, treeData);
-    }
+    };
     
-    function mapTreeData(folder)
+    BookmarkTreeViewer.prototype._mapTreeData = function (folder)
     {
         var treeFolder = [];
-        
+
         var subFolders = folder.GetFolders();
         subFolders.forEach(function (folder) {
 			var title = folder.title;
@@ -23,9 +23,9 @@ define(function () {
 			}
 
             treeFolder.push({
-                text: folder.title,
+                text: title,
                 state: { opened: false },
-                children: mapTreeData(folder)
+                children: this._mapTreeData(folder)
             });
         }.bind(this));
         
@@ -39,7 +39,7 @@ define(function () {
         });
         
         return treeFolder;
-    }
+    };
 
     function setTreeData(id, data)
     {
