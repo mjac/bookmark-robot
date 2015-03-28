@@ -9,6 +9,7 @@ define(['RootFolder', 'Folder', 'PropertySort'], function (rootFolderConstructor
         var rootFolder = new rootFolderConstructor();
         
 		var tags = {};
+		var addedBookmarks = {};
 		
         bookmarkList.forEach(function (bookmark) {
 			var bookmarkTags = bookmarkToTagMap[bookmark.id];
@@ -19,6 +20,8 @@ define(['RootFolder', 'Folder', 'PropertySort'], function (rootFolderConstructor
 				
 				tags[tag].push(bookmark);
 			});
+
+			addedBookmarks[bookmark.id] = false;
         });
 
 		DepluralizeTags(tags);
@@ -26,36 +29,36 @@ define(['RootFolder', 'Folder', 'PropertySort'], function (rootFolderConstructor
 		var tagFrequency = [];
 		for (var tag in tags) {
 			var tagLength = tags[tag].length;
-			if (tagLength >= minBookmarksPerFolder) {
-				tagFrequency.push([tag, tagLength]);
-			}
+			tagFrequency.push([tag, tagLength]);
 		}
 		
 		tagFrequency.sort(propertySort(1, true));
 		
-		var addedBookmarks = {};
-		var foldersUnderRoot = tagFrequency.reduce(function (folders, tagPair) {
+		tagFrequency.forEach(function (tagPair) {
 			var tag = tagPair[0];
-			var bookmarks = tags[tag];
 			
+			var bookmarks = tags[tag];
+			var leftOverBookmarks = bookmarks.filter(function (bookmark) {
+				return !addedBookmarks[bookmark.id];
+			});
+
+			if (leftOverBookmarks.length < minBookmarksPerFolder) {
+				return;
+			}
+
 			var tagFolder = new folderConstructor(tag);
 			
-			bookmarks.forEach(function (bookmark) {
-				if (!(bookmark.id in addedBookmarks)) {
-					tagFolder.AddBookmark(bookmark);
-					addedBookmarks[bookmark.id] = true;
-				}
+			leftOverBookmarks.forEach(function (bookmark) {
+			if(addedBookmarks[bookmark.id]) console.log(bookmark, tagPair);
+				tagFolder.AddBookmark(bookmark);
+				addedBookmarks[bookmark.id] = true;
 			});
-			
-			if (tagFolder.GetBookmarks().length > minBookmarksPerFolder) {
-				rootFolder.AddFolder(tagFolder);
-			}
-			
-			return folders;
-		}, rootFolder);
+
+			rootFolder.AddFolder(tagFolder);
+		});
 		
         bookmarkList.forEach(function (bookmark) {
-			if (!(bookmark.id in addedBookmarks)) {
+			if (!addedBookmarks[bookmark.id]) {
 				rootFolder.AddBookmark(bookmark);
 			}
         });
