@@ -8,26 +8,29 @@ define(function () {
     BookmarkTreeViewer.prototype.ShowFolder = function (rootFolder)
     {
         var treeData = this._mapTreeData(rootFolder);
-        setTreeData(this.id, treeData);
+		treeData.state.opened = true;
+
+        setTreeData(this.id, [treeData]);
     };
     
     BookmarkTreeViewer.prototype._mapTreeData = function (folder)
     {
-        var treeFolder = [];
+		var title = folder.title;
+		if (this.showCounts) {
+			title += ' (' + folder.GetAllBookmarks().length + ')';
+		}
 
-        var subFolders = folder.GetFolders();
-        subFolders.forEach(function (folder) {
-			var title = folder.title;
-			if (this.showCounts) {
-				title += ' (' + folder.GetAllBookmarks().length + ')';
-			}
+		var treeFolder = {
+			text: title,
+			state: { opened: false },
+			children: []
+		};
 
-            treeFolder.push({
-                text: title,
-                state: { opened: false },
-                children: this._mapTreeData(folder)
-            });
-        }.bind(this));
+		var subFolders = folder.GetFolders();
+		subFolders.forEach(function (subFolder) {
+			var subFolderData = this._mapTreeData(subFolder);
+			treeFolder.children.push(subFolderData);
+		}.bind(this));
         
         var subBookmarks = folder.GetBookmarks();
         subBookmarks.forEach(function (bookmark) {
@@ -35,7 +38,7 @@ define(function () {
                 text: bookmark.title,
                 url: bookmark.url
             };
-            treeFolder.push(treeBookmark);
+            treeFolder.children.push(treeBookmark);
         });
         
         return treeFolder;
