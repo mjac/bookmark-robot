@@ -81,7 +81,12 @@ define(['RootFolder', 'Folder', 'PropertySort'], function (rootFolderConstructor
 						targetTag = tag;
 					}
 
-					tags[targetTag] = tags[targetTag].concat(tags[sourceTag]);
+					tags[sourceTag].forEach(function (bookmark) {
+						if (tags[targetTag].indexOf(bookmark) === -1) {
+							tags[targetTag].push(bookmark);
+						}
+					});
+
 					delete tags[sourceTag];
 				}
 			}
