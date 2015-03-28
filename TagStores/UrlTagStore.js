@@ -32,10 +32,11 @@ define(function () {
             var tags = [];
             
             var firstDotIndex = hostname.indexOf('.');
-            if (firstDotIndex >= 0 && hostname.length > 5) {
+            if (firstDotIndex >= 0 && !/^[a-z]{1,3}\.uk$/i.test(hostname)) {
                 tags.push(hostname);
                 
                 var hostnamePart = hostname.substring(firstDotIndex + 1);
+				var secondDotIndex = hostnamePart.indexOf('.');
                 
                 if (hostnamePart.indexOf('.') >= 0) {
                     var hostnameTags = this._getHostnameTags(hostnamePart);
