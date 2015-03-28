@@ -71,11 +71,14 @@ define(function () {
 
 			function write(folder, bookmarkTree) {
 				var childrenByName = {};
-				bookmarkTree.children.forEach(function (subBookmarkTree) {
-					if (!('url' in subBookmarkTree)) {
-						childrenByName[subBookmarkTree.title] = subBookmarkTree;	
-					}
-				});
+
+				if (bookmarkTree.children) {
+					bookmarkTree.children.forEach(function (subBookmarkTree) {
+						if (!('url' in subBookmarkTree)) {
+							childrenByName[subBookmarkTree.title] = subBookmarkTree;	
+						}
+					});
+				}
 
 				folder._folders.forEach(function (subFolder) {
 					if (subFolder.title in childrenByName) {
