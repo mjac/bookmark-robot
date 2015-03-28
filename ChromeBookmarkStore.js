@@ -45,7 +45,39 @@ define(function () {
             }, function (updatedBookmark) {
                 callback(bookmark, updatedBookmark.title);
             });
-        }
+        },
+		CreateHierarchy: function (folder) {
+			var store = this;
+
+			function write(folder, bookmarkTree) {
+				var childrenByName = {};
+				bookmarkTree.children.forEach(function (subBookmarkTree) {
+					if (!('url' in subBookmarkTree)) {
+						childrenByName[subBookmarkTree.title] = subBookmarkTree;	
+					}
+				});
+
+				folder._folders.forEach(function (subFolder) {
+					if (subFolder.title in childrenByName) {
+						write(subFolder, childrenByName[subFolder.title]);
+					} else {
+						store.CreateBookmarkFolder(subFolder.title, bookmarkTree.id, function (tagTree) {
+							childrenByName[subFolder.title] = tagTree;
+							write(subFolder, childrenByName[subFolder.title]);
+						});
+					}
+				});
+
+				folder._bookmarks.forEach(function (bookmark) {
+					store.MoveBookmark(bookmark.id, bookmarkTree.id);
+				});
+			}
+
+            chrome.bookmarks.getSubTree('1', function (bookmarkTreeParent) {
+                var bookmarksBar = bookmarkTreeParent[0];
+				write(folder, bookmarksBar);
+            });
+		}
     };
     
     return new ChromeBookmarkStore();

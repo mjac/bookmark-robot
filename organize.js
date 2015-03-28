@@ -89,5 +89,9 @@ require([
 		
 		var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
 		afterTreeViewer.ShowFolder(afterRootFolder);
+
+		$('#UpdateBookmarks').click(function () {
+			bookmarkStore.CreateHierarchy(afterRootFolder);
+		});
     }.bind(this));
 });
