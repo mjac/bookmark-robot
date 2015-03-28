@@ -1,10 +1,8 @@
 define(function () {
 	var bookmarkId = 0;
 	
-    function Bookmark(title, url) {
-		this.id = bookmarkId;
-		++bookmarkId;
-		
+    function Bookmark(id, title, url) {
+		this.id = id;
         this.title = title;
         this.url = url;
     }

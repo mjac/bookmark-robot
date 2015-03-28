@@ -21,7 +21,7 @@ define([
 				this.readTree(bookmarkChild, bookmarks);
 			}
 		} else {
-			var newBookmark = new bookmarkConstructor(bookmarkTree.title, bookmarkTree.url);
+			var newBookmark = new bookmarkConstructor(bookmarkTree.id, bookmarkTree.title, bookmarkTree.url);
 			bookmarks.AddBookmark(newBookmark);
 		}
 	}
