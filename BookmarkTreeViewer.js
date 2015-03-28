@@ -1,7 +1,8 @@
 define(function () { 
-    function BookmarkTreeViewer(id)
+    function BookmarkTreeViewer(id, showCounts)
     {
         this.id = id;
+		this.showCounts = !!showCounts;
     }
     
     BookmarkTreeViewer.prototype.ShowFolder = function (rootFolder)
@@ -16,12 +17,17 @@ define(function () {
         
         var subFolders = folder.GetFolders();
         subFolders.forEach(function (folder) {
+			var title = folder.title;
+			if (this.showCounts) {
+				title += ' (' + folder.GetAllBookmarks().length + ')';
+			}
+
             treeFolder.push({
                 text: folder.title,
                 state: { opened: false },
                 children: mapTreeData(folder)
             });
-        });
+        }.bind(this));
         
         var subBookmarks = folder.GetBookmarks();
         subBookmarks.forEach(function (bookmark) {
