@@ -1,22 +1,17 @@
-$(document).ready(function() {
-	var bookmarkStore;
-	var bookmarkTableView;
-    
-    require([
-        'BookmarkTableView',
-        'ChromeBookmarkStore',
-        'TagStores/DefaultCompositeTagStore'
-    ], function (
-        bookmarkTableViewConstructor,
-        bookmarkStore,
-        compositeTagStore
-    ) {
-        bookmarkTableView = new bookmarkTableViewConstructor($('#bookmarksTable'), bookmarkStore, compositeTagStore)
-        bookmarkTableView.UpdateTree();
+require([
+	'BookmarkTableView',
+	'ChromeBookmarkStore',
+	'TagStores/DefaultCompositeTagStore'
+], function (
+	bookmarkTableViewConstructor,
+	bookmarkStore,
+	compositeTagStore
+) {
+	bookmarkTableView = new bookmarkTableViewConstructor($('#bookmarksTable'), bookmarkStore, compositeTagStore)
+	bookmarkTableView.UpdateTree();
 
-        var select = bookmarkTableView.Select.bind(bookmarkTableView);
-        var performAction = bookmarkTableView.PerformAction.bind(bookmarkTableView);
-    });
+	var select = bookmarkTableView.Select.bind(bookmarkTableView);
+	var performAction = bookmarkTableView.PerformAction.bind(bookmarkTableView);
 
 	$('#actionConnect').on('click', function () {
 		var activeConnect = [];
@@ -125,64 +120,3 @@ $(document).ready(function() {
 		bookmarkTableView.UpdateTree();
 	});
 });
-
-function getTagMap(bookmarkList) {
-	var tagMap = {};
-
-	for (var bookmarkIdx in bookmarkList) {
-		var bookmark = bookmarkList[bookmarkIdx];
-
-		if (bookmark === null) {
-			continue;
-		}
-
-		var tags = bookmark.getTags();
-
-		if (tags.length < 1) {
-			tags = ['unsorted'];
-		}
-
-		for (var tagIdx in tags) {
-			var tag = tags[tagIdx];
-
-			if (!(tag in tagMap)) {
-				tagMap[tag] = new Tag(tag);
-			}
-
-			tagMap[tag].addBookmark(bookmark);
-		}
-	}
-
-	return tagMap;
-}
-
-function getOptimal(bookmarkList, recurse) {
-		var tagMap = getTagMap(bookmarkList);
-
-		var tag = new Tag(new Date().toISOString());
-		tag.addTags(tagMap);
-		tag.optimise(recurse);
-		tag.prune();
-		tag.removeDuplicates(function (a) {
-			var ownTag = a.hierarchy[a.hierarchy.length - 1];
-
-			var bookmarkDiff = Math.abs(20 - len(ownTag.bookmarks));
-			var hierarchyDiff = Math.abs(1 + Math.log(bookmarkList.length) / Math.log(20) - a.hierarchy.length);
-
-			var tagDiff = 0;
-			if (a.hierarchy.length > 1) {
-				var parentTag = a.hierarchy[a.hierarchy.length - 2];
-				tagDiff = Math.abs(20 - len(parentTag.tags));
-			}
-
-			var diff = 100 * hierarchyDiff + tagDiff + 5 * bookmarkDiff;
-			return diff;
-//			return -a.hierarchy.reduce(function (dist, tag) {
-//				return dist + len(tag.tags) / 2;
-//			}, 0);
-		});
-		tag.prune();
-		tag.markBookmarksUnsorted();
-
-		return tag;
-}
