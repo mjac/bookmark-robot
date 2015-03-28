@@ -93,5 +93,9 @@ require([
 		$('#UpdateBookmarks').click(function () {
 			bookmarkStore.CreateHierarchy(afterRootFolder);
 		});
+
+		$('#RemoveEmpty').click(function () {
+			bookmarkStore.RemoveEmptyFolders();
+		});
     }.bind(this));
 });

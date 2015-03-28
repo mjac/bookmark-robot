@@ -46,6 +46,26 @@ define(function () {
                 callback(bookmark, updatedBookmark.title);
             });
         },
+
+		RemoveEmptyFolders: function () {
+			function removeAll(bookmarkTree) {
+				if ('url' in bookmarkTree) {
+					return;
+				}
+
+				if (bookmarkTree.children.length > 0) {
+					bookmarkTree.children.forEach(removeAll);
+					return;
+				}
+
+				chrome.bookmarks.remove(bookmarkTree.id);
+			}
+
+            chrome.bookmarks.getTree(function (bookmarkTree) {
+				removeAll(bookmarkTree[0]);
+            });
+		},
+
 		CreateHierarchy: function (folder) {
 			var store = this;
 
