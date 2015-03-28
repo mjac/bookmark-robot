@@ -11,7 +11,8 @@ require([
     'BookmarkTreeReader',
     'FolderSorter',
     'FolderStrategy/GreedyFolderStrategy',
-    'BookmarkTreeViewer'
+    'BookmarkTreeViewer',
+	'PropertySort'
 ], function (
     rootFolderConstructor,
     folderConstructor,
@@ -25,7 +26,8 @@ require([
     bookmarkTreeReader,
     folderSorter,
     folderStrategy,
-    bookmarkTreeViewerConstructor
+    bookmarkTreeViewerConstructor,
+	propertySort
 ) {
 	function Organize(title, tagStore, bookmarkList, forceEmptyRoot) {
         var tagMap = {};
@@ -73,6 +75,7 @@ require([
         beforeTreeViewer.ShowFolder(beforeRootFolder);
 		
         var bookmarkList = beforeRootFolder.GetAllBookmarks();
+		bookmarkList.sort(propertySort('id'));
 		
         var afterRootFolder = new rootFolderConstructor();
 
