@@ -20,7 +20,9 @@ define(['RootFolder', 'Folder', 'PropertySort'], function (rootFolderConstructor
 				tags[tag].push(bookmark);
 			});
         });
-		
+
+		DepluralizeTags(tags);
+	
 		var tagFrequency = [];
 		for (var tag in tags) {
 			var tagLength = tags[tag].length;
@@ -60,6 +62,31 @@ define(['RootFolder', 'Folder', 'PropertySort'], function (rootFolderConstructor
         
         return rootFolder;
 	};
+
+	function DepluralizeTags(tags)
+	{
+		for (var tag in tags) {
+			if (tag.slice(-1) === 's') {
+				var depluralized = tag.substring(0, tag.length - 1);
+				if (depluralized in tags) {
+					var frequency = tags[tag].length;
+					var depluralizedFrequency = tags[depluralized].length;
+
+					var sourceTag, targetTag;
+					if (depluralizedFrequency > frequency) {
+						sourceTag = tag;
+						targetTag = depluralized;
+					} else {
+						sourceTag = depluralized;
+						targetTag = tag;
+					}
+
+					tags[targetTag] = tags[targetTag].concat(tags[sourceTag]);
+					delete tags[sourceTag];
+				}
+			}
+		}
+	}
 	
 	return new GreedyFolderStrategy();
 });
