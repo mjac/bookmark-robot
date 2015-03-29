@@ -1,4 +1,16 @@
-define(['Bookmark', 'MultipleAsyncRequest', 'BookmarkTreeReader', 'RootFolder'], function (bookmarkConstructor, requestConstructor, bookmarkTreeReader, rootFolderConstructor) {
+define([
+	'Bookmark',
+	'MultipleAsyncRequest',
+	'BookmarkTreeReader',
+	'RootFolder',
+	'PropertySort'
+], function (
+	bookmarkConstructor,
+	requestConstructor,
+	bookmarkTreeReader,
+	rootFolderConstructor,
+	propertySort
+) {
     function BookmarkTableView(tableNode, bookmarkStore, tagStore)
     {
         this.tableNode = tableNode;
@@ -19,6 +31,7 @@ define(['Bookmark', 'MultipleAsyncRequest', 'BookmarkTreeReader', 'RootFolder'],
                 bookmarkTreeReader.readTree(bookmarkTree[0].children, folder);
 
 				this.bookmarkList = folder.GetAllBookmarks();
+				this.bookmarkList.sort(propertySort('title'));
 
 				this.bookmarkList.forEach(function (bookmark, index) {
 					this.bookmarkMap[bookmark.id] = index;
