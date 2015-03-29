@@ -59,19 +59,21 @@ define([
             var rowNode = this.GetRow(bookmarkUpdate.id);
 
             rowNode.toggleClass('found', bookmarkUpdate.success);
-            rowNode.toggleClass('failed', !bookmarkUpdate.success || !bookmarkUpdate.title);
-            rowNode.toggleClass('loading', false);
+            rowNode.toggleClass('failed', !bookmarkUpdate.success);
 
 			var titleNode = rowNode.find('td.title a');
 
 			if (bookmarkUpdate.success) {
 				var hasNewTitle = bookmarkUpdate.title !== bookmark.title;
-				titleNode.toggleClass('new', hasNewTitle);
 
 				if (bookmarkUpdate.title) {
+					rowNode.toggleClass('new', hasNewTitle);
 					titleNode.text(bookmarkUpdate.title);
 				} else {
 					titleNode.text('Title not found, was: ' + bookmark.title);
+					rowNode.removeClass('new');
+					rowNode.removeClass('found');
+					rowNode.addClass('failed');
 				}
 			} else {
 				titleNode.text(bookmark.title + ' (' + bookmarkUpdate.statusCode + ')');
