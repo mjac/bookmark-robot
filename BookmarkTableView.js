@@ -7,6 +7,7 @@ define(['Bookmark', 'MultipleAsyncRequest', 'BookmarkTreeReader', 'RootFolder'],
         this.bookmarkStore = bookmarkStore;
         this.tagStore = tagStore;
         this.bookmarkList = [];
+        this.bookmarkMap = {};
     }
 
     BookmarkTableView.prototype = {
@@ -18,6 +19,10 @@ define(['Bookmark', 'MultipleAsyncRequest', 'BookmarkTreeReader', 'RootFolder'],
                 bookmarkTreeReader.readTree(bookmarkTree[0].children, folder);
 
 				this.bookmarkList = folder.GetAllBookmarks();
+
+				this.bookmarkList.forEach(function (bookmark, index) {
+					this.bookmarkMap[bookmark.id] = index;
+				}.bind(this));
 
 				this.WriteTree();
             }.bind(this));
@@ -37,23 +42,31 @@ define(['Bookmark', 'MultipleAsyncRequest', 'BookmarkTreeReader', 'RootFolder'],
             }
         },
 
-        UpdateTable: function(bookmark) {
-            var rowNode = getRow(bookmark);
+        UpdateTable: function (bookmarkUpdate, bookmark) {
+            var rowNode = this.GetRow(bookmarkUpdate.id);
 
-            var hasNewTitle = bookmark.hasNewTitle()
-            var titleNode = rowNode.find('td.title a');
+            rowNode.toggleClass('found', bookmarkUpdate.success);
+            rowNode.toggleClass('failed', !bookmarkUpdate.success || !bookmarkUpdate.title);
+            rowNode.toggleClass('loading', false);
 
-            titleNode.text(hasNewTitle ? bookmark.liveTitle : bookmark.title);
+			var titleNode = rowNode.find('td.title a');
 
-            titleNode.toggleClass('new', hasNewTitle);
+			if (bookmarkUpdate.success) {
+				var hasNewTitle = bookmarkUpdate.title !== bookmark.title;
+				titleNode.toggleClass('new', hasNewTitle);
 
-            rowNode.toggleClass('found', bookmark.found === true);
-            rowNode.toggleClass('failed', bookmark.found === false);
-            rowNode.toggleClass('loading', bookmark.loading);
+				if (bookmarkUpdate.title) {
+					titleNode.text(bookmarkUpdate.title);
+				} else {
+					titleNode.text('Title not found, was: ' + bookmark.title);
+				}
+			} else {
+				titleNode.text(bookmark.title + ' (' + bookmarkUpdate.statusCode + ')');
+			}
         },
 
-        GetRow: function(bookmark) {
-            return getRowIdx(this.bookmarkList.indexOf(bookmark));
+        GetRow: function(bookmarkId) {
+            return this.GetRowIdx(this.bookmarkMap[bookmarkId]);
         },
 
         GetRowIdx: function(bookmarkIdx) {

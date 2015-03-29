@@ -4,14 +4,16 @@ require([
 	'TagStores/DefaultCompositeTagStore',
 	'BookmarkContentRepository',
 	'HtmlParser',
-	'MultipleAsyncRequest'
+	'MultipleAsyncRequest',
+	'BookmarkUpdateFactory'
 ], function (
 	bookmarkTableViewConstructor,
 	bookmarkStore,
 	compositeTagStore,
 	bookmarkContentRepository,
 	htmlParser,
-	requestConstructor
+	requestConstructor,
+	bookmarkUpdateFactory
 ) {
 	bookmarkTableView = new bookmarkTableViewConstructor($('#bookmarksTable'), bookmarkStore, compositeTagStore)
 	bookmarkTableView.UpdateTree();
@@ -24,15 +26,25 @@ require([
 
 		request.SetMaxPendingRequests(5);
 
+		var bookmarkUpdates = [];
+
 		var connect = function (bookmark, callback) {
 			var url = bookmark.url;
 		
 			bookmarkContentRepository.GetHTML(url, function (data) {
 				var title = htmlParser.GetTitle(data);
-				if (title !== bookmark.title) {
-					bookmark.newTitle = title;
-					console.log('NEW TITLE', title);
-				}
+
+				var bookmarkUpdate = bookmarkUpdateFactory.CreateUpdate(bookmark.id, title);
+				bookmarkUpdates.push(bookmarkUpdate);
+
+				bookmarkTableView.UpdateTable(bookmarkUpdate, bookmark);
+
+				callback();
+			}, function (statusCode) {
+				var bookmarkUpdate = bookmarkUpdateFactory.CreateUpdateFromFailure(bookmark.id, statusCode);
+				bookmarkUpdates.push(bookmarkUpdate);
+
+				bookmarkTableView.UpdateTable(bookmarkUpdate, bookmark);
 
 				callback();
 			});
@@ -47,6 +59,7 @@ require([
 
 		request.SetFinalCallback(function () {
 			console.log('DONE');
+			console.log(bookmarkUpdates);
 		});
 
 		request.Execute();

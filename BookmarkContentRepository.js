@@ -21,7 +21,7 @@ define(function () {
 
 				error: function (jqXHR, textStatus, errorThrown) {
 					if (callbackFailure) {
-						callbackFailure();
+						callbackFailure(jqXHR.status);
 					}
 				}
 			});
