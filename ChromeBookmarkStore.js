@@ -108,6 +108,11 @@ define(function () {
 
 				folder._folders.forEach(function (subFolder) {
 					if (subFolder.title in childrenByName) {
+						subFolderTree = childrenByName[subFolder.title];
+
+						// We have to move the folder to reset the index for ordering
+						store.MoveBookmark(subFolderTree.id, bookmarkTree.id);
+
 						write(subFolder, childrenByName[subFolder.title]);
 					} else {
 						store.CreateBookmarkFolder(subFolder.title, bookmarkTree.id, function (tagTree) {
