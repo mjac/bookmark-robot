@@ -21,6 +21,8 @@ require([
 	var select = bookmarkTableView.Select.bind(bookmarkTableView);
 	var performAction = bookmarkTableView.PerformAction.bind(bookmarkTableView);
 
+	var updateMap = {};
+
 	$('#actionConnect').on('click', function () {
 		var request = new requestConstructor();
 
@@ -28,18 +30,20 @@ require([
 
 		var connect = function (bookmark, callback) {
 			var url = bookmark.url;
+
+			function processUpdate(bookmarkUpdate) {
+				bookmarkTableView.UpdateTable(bookmarkUpdate, bookmark);
+				callback();
+			}
 		
 			bookmarkContentRepository.GetHTML(url, function (data) {
 				var title = htmlParser.GetTitle(data);
 				var bookmarkUpdate = bookmarkUpdateFactory.CreateUpdate(bookmark.id, title);
-				bookmarkTableView.UpdateTable(bookmarkUpdate, bookmark);
-
-				callback();
+				updateMap[bookmarkUpdate.id] = bookmarkUpdate;
+				processUpdate(bookmarkUpdate);
 			}, function (statusCode) {
 				var bookmarkUpdate = bookmarkUpdateFactory.CreateUpdateFromFailure(bookmark.id, statusCode);
-				bookmarkTableView.UpdateTable(bookmarkUpdate, bookmark);
-
-				callback();
+				processUpdate(bookmarkUpdate);
 			});
 		};
 
@@ -54,13 +58,22 @@ require([
 
 	$('#actionSave').on('click', function () {
 		bookmarkTableView.PerformAction(function (idx, bookmark) {
-			if (!bookmark.hasNewTitle()) {
+			if (!(bookmark.id in updateMap)) {
 				return;
 			}
 
-			bookmarkStore.UpdateBookmarkTitle(bookmark, bookmark.title, function(bookmark, bookmarkTitle)
-			{
+			var bookmarkUpdate = updateMap[bookmark.id];
+			if (!bookmarkUpdate.title) {
+				return;
+			}
+
+			if (bookmarkUpdate.title === bookmark.title) {
+				return;
+			}
+
+			bookmarkStore.UpdateBookmarkTitle(bookmark, bookmarkUpdate.title, function (bookmark, bookmarkTitle) {
 				bookmark.title = bookmarkTitle;
+				bookmarkTableView.UpdateTable(bookmarkUpdate, bookmark);
 			});
 		});
 	});
