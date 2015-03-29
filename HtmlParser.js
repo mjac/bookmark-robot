@@ -11,7 +11,7 @@ define(function () {
 			var fakeTitleElement = document.createElement('div');
 			fakeTitleElement.innerHTML = titleHtml;
 			
-			var title = fakeTitleElement.innerText;
+			var title = fakeTitleElement.innerText.replace(/\s+/g, ' ');
 			if (!title) {
 				return null;
 			}
