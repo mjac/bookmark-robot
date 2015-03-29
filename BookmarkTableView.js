@@ -50,7 +50,7 @@ define([
                 var bookmarkRow = this.tableBody.append('<tr data-id="' + bookmarkIdx + 
                     '"><td class="select"><input type="checkbox" value="' + bookmarkIdx + 
                     '" /></td><td class="title"><a>' + bookmark.title + 
-                    '</a></td><td class="url"><a>' + bookmark.url + 
+                    '</a></td><td class="url"><a href="' + bookmark.url + '" target="_blank">' + bookmark.url + 
                     '</a></td></tr>');
             }
         },
@@ -79,6 +79,15 @@ define([
 				titleNode.text(bookmark.title + ' (' + bookmarkUpdate.statusCode + ')');
 			}
         },
+
+		RemoveBookmark: function (bookmarkId) {
+			var row = this.GetRow(bookmarkId);
+			if (row) {
+				row.remove();
+				delete this.bookmarkList[this.bookmarkMap[bookmarkId]];
+				delete this.bookmarkMap[bookmarkId];
+			}
+		},
 
         GetRow: function(bookmarkId) {
             return this.GetRowIdx(this.bookmarkMap[bookmarkId]);

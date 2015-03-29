@@ -84,11 +84,10 @@ require([
 		}
 
 		bookmarkTableView.PerformAction(function (idx, bookmark) {
-			// Use ChromeBookmarkStore
-			chrome.bookmarks.remove(this.id, function () {
-				getRow(this).remove();
-				bookmarkList[bookmarkList.indexOf(this)] = null;
-			}.bind(this));
+			bookmarkStore.RemoveBookmark(bookmark, function () {
+				bookmarkTableView.RemoveBookmark(bookmark.id);
+				delete updateMap[bookmark.id];
+			});
 		});
 	});
 
