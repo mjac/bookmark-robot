@@ -3,13 +3,15 @@ require([
 	'ChromeBookmarkStore',
 	'TagStores/DefaultCompositeTagStore',
 	'BookmarkContentRepository',
-	'HtmlParser'
+	'HtmlParser',
+	'MultipleAsyncRequest'
 ], function (
 	bookmarkTableViewConstructor,
 	bookmarkStore,
 	compositeTagStore,
 	bookmarkContentRepository,
-	htmlParser
+	htmlParser,
+	requestConstructor
 ) {
 	bookmarkTableView = new bookmarkTableViewConstructor($('#bookmarksTable'), bookmarkStore, compositeTagStore)
 	bookmarkTableView.UpdateTree();
@@ -18,22 +20,36 @@ require([
 	var performAction = bookmarkTableView.PerformAction.bind(bookmarkTableView);
 
 	$('#actionConnect').on('click', function () {
-		var activeConnect = [];
-		var connectList = [];
-		var connectionLimit = 5;
+		var request = new requestConstructor();
+
+		request.SetMaxPendingRequests(5);
+
+		var connect = function (bookmark, callback) {
+			var url = bookmark.url;
+		
+			bookmarkContentRepository.GetHTML(url, function (data) {
+				var title = htmlParser.GetTitle(data);
+				if (title !== bookmark.title) {
+					bookmark.newTitle = title;
+					console.log('NEW TITLE', title);
+				}
+
+				callback();
+			});
+		};
 
 		bookmarkTableView.PerformAction(function (idx, bookmark) {
-			connectList.push(bookmark);
+			request.AddRequest(function (callback) {
+				connect(bookmark, callback);
+			});
 		});
 
-		var url = connectList[0].url;
-	
-		bookmarkContentRepository.GetHTML(url, function (data) {
-			var title = htmlParser.GetTitle(data);
-			if (title !== null) {
-				console.log(title);		
-			}
+
+		request.SetFinalCallback(function () {
+			console.log('DONE');
 		});
+
+		request.Execute();
 	});
 
 	$('#actionSave').on('click', function () {
