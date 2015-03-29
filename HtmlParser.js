@@ -1,7 +1,7 @@
 define(function () {
 	var HtmlParser = {
 		GetTitle: function (pageHtml) {
-			var titleResult = /<title>\s*([^<]*?)\s*<\/title>/.exec(pageHtml);
+			var titleResult = /<title[^>]*>(?:\(\d+\))?\s*([^<]*?)\s*<\/title>/gi.exec(pageHtml);
 			if (!titleResult) {
 				return null;
 			}
