@@ -26,24 +26,17 @@ require([
 
 		request.SetMaxPendingRequests(5);
 
-		var bookmarkUpdates = [];
-
 		var connect = function (bookmark, callback) {
 			var url = bookmark.url;
 		
 			bookmarkContentRepository.GetHTML(url, function (data) {
 				var title = htmlParser.GetTitle(data);
-
 				var bookmarkUpdate = bookmarkUpdateFactory.CreateUpdate(bookmark.id, title);
-				bookmarkUpdates.push(bookmarkUpdate);
-
 				bookmarkTableView.UpdateTable(bookmarkUpdate, bookmark);
 
 				callback();
 			}, function (statusCode) {
 				var bookmarkUpdate = bookmarkUpdateFactory.CreateUpdateFromFailure(bookmark.id, statusCode);
-				bookmarkUpdates.push(bookmarkUpdate);
-
 				bookmarkTableView.UpdateTable(bookmarkUpdate, bookmark);
 
 				callback();
@@ -54,12 +47,6 @@ require([
 			request.AddRequest(function (callback) {
 				connect(bookmark, callback);
 			});
-		});
-
-
-		request.SetFinalCallback(function () {
-			console.log('DONE');
-			console.log(bookmarkUpdates);
 		});
 
 		request.Execute();
@@ -112,19 +99,13 @@ require([
 
 	$('#selectChanged').on('click', function () {
 		select(function (idx, bookmark, row) {
-			return bookmark.hasNewTitle();
-		});
-	});
-
-	$('#selectLoaded').on('click', function () {
-		select(function (idx, bookmark, row) {
-			return bookmark.found === true;
+			return row.hasClass('new');
 		});
 	});
 
 	$('#selectFailed').on('click', function () {
 		select(function (idx, bookmark, row) {
-			return bookmark.found === false;
+			return row.hasClass('failed');
 		});
 	});
 
