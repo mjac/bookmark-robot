@@ -117,9 +117,4 @@ require([
 	$('#viewChecked').on('click', function () {
 		$('#bookmarksTable').toggleClass('showSelected', $(this).attr('checked'));
 	});
-
-	$('#viewHttp').on('click', function () {
-		onlyHttp = $(this).is(':checked');
-		bookmarkTableView.UpdateTree();
-	});
 });
