@@ -4,6 +4,7 @@
 	"dependencies": {
 		"requirejs": "latest",
 		"jquery": "latest",
-		"jstree": "latest"
+		"jstree": "latest",
+		"qunit": "latest"
 	}
 }
