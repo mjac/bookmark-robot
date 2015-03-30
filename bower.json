@@ -1,0 +1,9 @@
+{
+	"name": "Bookmark Robot",
+	"version": "1.0.0",
+	"dependencies": {
+		"requirejs": "latest",
+		"jquery": "latest",
+		"jstree": "latest"
+	}
+}

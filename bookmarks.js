@@ -1,4 +1,5 @@
 require([
+	'jquery',
 	'BookmarkTableView',
 	'ChromeBookmarkStore',
 	'BookmarkContentRepository',
@@ -6,6 +7,7 @@ require([
 	'MultipleAsyncRequest',
 	'BookmarkUpdateFactory'
 ], function (
+	$,
 	bookmarkTableViewConstructor,
 	bookmarkStore,
 	bookmarkContentRepository,

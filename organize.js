@@ -1,4 +1,6 @@
 require([
+	'jquery',
+	'jquery.jstree',
 	'RootFolder',
 	'Folder',
 	'ChromeBookmarkStore',
@@ -12,6 +14,8 @@ require([
 	'BookmarkTreeViewer',
 	'PropertySort'
 ], function (
+	$,
+	jstree,
 	rootFolderConstructor,
 	folderConstructor,
 	bookmarkStore,
