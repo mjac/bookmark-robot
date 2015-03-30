@@ -1,41 +1,41 @@
 require([
-    'RootFolder',
-    'Folder',
-    'MultipleAsyncRequest',
-    'BookmarkTableView',
-    'ChromeBookmarkStore',
-    'TagStores/UrlTagStore',
-    'TagStores/IntranetTagStore',
-    'TagStores/FileTagStore',
-    'TagStores/TitleTagStore',
-    'BookmarkTreeReader',
-    'FolderSorter',
-    'FolderStrategy/GreedyFolderStrategy',
-    'BookmarkTreeViewer',
+	'RootFolder',
+	'Folder',
+	'MultipleAsyncRequest',
+	'BookmarkTableView',
+	'ChromeBookmarkStore',
+	'TagStores/UrlTagStore',
+	'TagStores/IntranetTagStore',
+	'TagStores/FileTagStore',
+	'TagStores/TitleTagStore',
+	'BookmarkTreeReader',
+	'FolderSorter',
+	'FolderStrategy/GreedyFolderStrategy',
+	'BookmarkTreeViewer',
 	'PropertySort'
 ], function (
-    rootFolderConstructor,
-    folderConstructor,
-    requestConstructor,
-    bookmarkTableViewConstructor,
-    bookmarkStore,
-    urlTagStore,
-    intranetTagStore,
-    fileTagStore,
-    titleTagStore,
-    bookmarkTreeReader,
-    folderSorter,
-    folderStrategy,
-    bookmarkTreeViewerConstructor,
+	rootFolderConstructor,
+	folderConstructor,
+	requestConstructor,
+	bookmarkTableViewConstructor,
+	bookmarkStore,
+	urlTagStore,
+	intranetTagStore,
+	fileTagStore,
+	titleTagStore,
+	bookmarkTreeReader,
+	folderSorter,
+	folderStrategy,
+	bookmarkTreeViewerConstructor,
 	propertySort
-) {
+	) {
 	function Organize(title, tagStore, bookmarkList, forceEmptyRoot) {
-        var tagMap = {};
-		
-        var sortedBookmarks = [];
-        var unsortedBookmarks = [];
-		
-        bookmarkList.forEach(function (bookmark) {
+		var tagMap = {};
+
+		var sortedBookmarks = [];
+		var unsortedBookmarks = [];
+
+		bookmarkList.forEach(function (bookmark) {
 			var tags = tagStore.RequestTags(bookmark);
 			if (tags.length > 0) {
 				tagMap[bookmark.id] = tags;
@@ -43,16 +43,16 @@ require([
 			} else {
 				unsortedBookmarks.push(bookmark);
 			}
-        });
-		
+		});
+
 		var folder = folderStrategy.OrganizeIntoFolders(sortedBookmarks, tagMap);
 		folder.title = title;
-		
+
 		if (forceEmptyRoot) {
 			unsortedBookmarks = unsortedBookmarks.concat(folder._bookmarks);
 			folder._bookmarks = [];
 		}
-		
+
 		return {
 			Folder: folder,
 			UnsortedBookmarks: unsortedBookmarks
@@ -65,31 +65,31 @@ require([
 
 		return fileFolder.UnsortedBookmarks;
 	}
-	
-    bookmarkStore.GetBookmarkTree(function (bookmarkTree)
-    {
-        var beforeRootFolder = new rootFolderConstructor();
-        bookmarkTreeReader.readTree(bookmarkTree[0].children, beforeRootFolder);
-        
-        var beforeTreeViewer = new bookmarkTreeViewerConstructor('#before');
-        beforeTreeViewer.ShowFolder(beforeRootFolder);
-		
-        var bookmarkList = beforeRootFolder.GetAllBookmarks();
+
+	bookmarkStore.GetBookmarkTree(function (bookmarkTree)
+	{
+		var beforeRootFolder = new rootFolderConstructor();
+		bookmarkTreeReader.readTree(bookmarkTree[0].children, beforeRootFolder);
+
+		var beforeTreeViewer = new bookmarkTreeViewerConstructor('#before');
+		beforeTreeViewer.ShowFolder(beforeRootFolder);
+
+		var bookmarkList = beforeRootFolder.GetAllBookmarks();
 		bookmarkList.sort(propertySort('id'));
-		
-        var afterRootFolder = new rootFolderConstructor();
+
+		var afterRootFolder = new rootFolderConstructor();
 
 		bookmarkList = TryCategorize('Files', fileTagStore, bookmarkList, afterRootFolder);
 		bookmarkList = TryCategorize('Intranet', intranetTagStore, bookmarkList, afterRootFolder);
 		bookmarkList = TryCategorize('Websites', urlTagStore, bookmarkList, afterRootFolder, true);
 		bookmarkList = TryCategorize('Category', titleTagStore, bookmarkList, afterRootFolder, true);
-		
+
 		var unsortedFolder = new folderConstructor('Unsorted');
 		unsortedFolder._bookmarks = bookmarkList;
 		afterRootFolder.AddFolder(unsortedFolder);
-		
+
 		folderSorter(afterRootFolder);
-		
+
 		var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
 		afterTreeViewer.ShowFolder(afterRootFolder);
 
@@ -104,5 +104,5 @@ require([
 		$('#RemoveDuplicates').click(function () {
 			bookmarkStore.RemoveDuplicates();
 		});
-    }.bind(this));
+	}.bind(this));
 });

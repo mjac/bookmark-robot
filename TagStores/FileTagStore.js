@@ -1,22 +1,22 @@
 define(function () {
-    function FileTagStore()
-    {
-    }
+	function FileTagStore()
+	{
+	}
 
-    FileTagStore.prototype = {
-        RequestTags: function (bookmark, callback)
-        {
-            var tags = [];
-            
-            var urlMatch = bookmark.url.match(/.*\/[^?]*\.(png|pdf|jpg|zip|exe|txt)$/i);
-            
-            if (urlMatch !== null) {
-                tags.push(urlMatch[1]);
-            }
+	FileTagStore.prototype = {
+		RequestTags: function (bookmark, callback)
+		{
+			var tags = [];
 
-            return tags;
-        }
-    }
-    
-    return new FileTagStore();
+			var urlMatch = bookmark.url.match(/.*\/[^?]*\.(png|pdf|jpg|zip|exe|txt)$/i);
+
+			if (urlMatch !== null) {
+				tags.push(urlMatch[1]);
+			}
+
+			return tags;
+		}
+	}
+
+	return new FileTagStore();
 });

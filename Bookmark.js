@@ -1,11 +1,11 @@
 define(function () {
 	var bookmarkId = 0;
-	
-    function Bookmark(id, title, url) {
+
+	function Bookmark(id, title, url) {
 		this.id = id;
-        this.title = title;
-        this.url = url;
-    }
-    
-    return Bookmark;
+		this.title = title;
+		this.url = url;
+	}
+
+	return Bookmark;
 });

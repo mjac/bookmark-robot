@@ -4,7 +4,7 @@ define([
 ], function (
 	bookmarkConstructor,
 	folderConstructor
-) {
+	) {
 	function BookmarkTreeReader()
 	{
 	}
@@ -13,7 +13,7 @@ define([
 		if ('children' in bookmarkTree) {
 			var folder = new folderConstructor(bookmarkTree.title);
 			bookmarks.AddFolder(folder);
-			
+
 			this.readTree(bookmarkTree.children, folder);
 		} else if ($.isArray(bookmarkTree)) {
 			for (localIdx in bookmarkTree) {
@@ -25,6 +25,6 @@ define([
 			bookmarks.AddBookmark(newBookmark);
 		}
 	}
-	
+
 	return new BookmarkTreeReader();
 });

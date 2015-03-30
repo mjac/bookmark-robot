@@ -1,27 +1,24 @@
 define(function () {
-    function MultipleAsyncRequest()
-    {
-        this.finalCallback = null;
-        this.requests = [];
+	function MultipleAsyncRequest()
+	{
+		this.finalCallback = null;
+		this.requests = [];
 
 		this.pendingRequests = 0;
 		this.maxPendingRequests = null;
-    }
+	}
 
-    MultipleAsyncRequest.prototype = {
-        AddRequest: function (request) {
-            this.requests.push(request);
-        },
-
-        SetFinalCallback: function (finalCallback) {
-            this.finalCallback = finalCallback;
-        },
-
+	MultipleAsyncRequest.prototype = {
+		AddRequest: function (request) {
+			this.requests.push(request);
+		},
+		SetFinalCallback: function (finalCallback) {
+			this.finalCallback = finalCallback;
+		},
 		SetMaxPendingRequests: function (maxPendingRequests) {
 			this.maxPendingRequests = maxPendingRequests;
 		},
-
-        Execute: function () {
+		Execute: function () {
 			this.nextRequestIndex = 0;
 			this.totalRequests = this.requests.length;
 
@@ -29,10 +26,9 @@ define(function () {
 
 			this._ProcessRequests();
 		},
-
 		_ProcessRequests: function () {
-            var finalCallback = this.finalCallback;
-            var requestsRemaining = this.requests.length;
+			var finalCallback = this.finalCallback;
+			var requestsRemaining = this.requests.length;
 
 			while (this.nextRequestIndex < this.totalRequests) {
 				if (this.maxPendingRequests !== null && this.pendingRequests >= this.maxPendingRequests) {
@@ -53,8 +49,8 @@ define(function () {
 			if (this.pendingRequests < 1 && finalCallback) {
 				finalCallback();
 			}
-        }
-    };
-    
-    return MultipleAsyncRequest;
+		}
+	};
+
+	return MultipleAsyncRequest;
 });

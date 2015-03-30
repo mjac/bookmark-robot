@@ -1,26 +1,26 @@
 define(function () {
-    function IntranetTagStore()
-    {
-    }
+	function IntranetTagStore()
+	{
+	}
 
-    IntranetTagStore.prototype = {
-        RequestTags: function (bookmark, callback)
-        {
-            var tags = [];
-            
-            var urlMatch = bookmark.url.match(/\/\/(?:www\.)?([^/:]+)/i);
-            
-            if (urlMatch !== null) {
-                var hostname = urlMatch[1].toLowerCase();
-                
-                if (hostname.indexOf('.') < 0) {
-                    tags.push(hostname);
-                }
-            }
+	IntranetTagStore.prototype = {
+		RequestTags: function (bookmark, callback)
+		{
+			var tags = [];
 
-            return tags;
-        }
-    }
-    
-    return new IntranetTagStore();
+			var urlMatch = bookmark.url.match(/\/\/(?:www\.)?([^/:]+)/i);
+
+			if (urlMatch !== null) {
+				var hostname = urlMatch[1].toLowerCase();
+
+				if (hostname.indexOf('.') < 0) {
+					tags.push(hostname);
+				}
+			}
+
+			return tags;
+		}
+	}
+
+	return new IntranetTagStore();
 });

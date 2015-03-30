@@ -14,7 +14,7 @@ require([
 	htmlParser,
 	requestConstructor,
 	bookmarkUpdateFactory
-) {
+	) {
 	bookmarkTableView = new bookmarkTableViewConstructor($('#bookmarksTable'), bookmarkStore, compositeTagStore)
 	bookmarkTableView.UpdateTree();
 
@@ -35,7 +35,7 @@ require([
 				bookmarkTableView.UpdateTable(bookmarkUpdate, bookmark);
 				callback();
 			}
-		
+
 			bookmarkContentRepository.GetHTML(url, function (data) {
 				var title = htmlParser.GetTitle(data);
 				var bookmarkUpdate = bookmarkUpdateFactory.CreateUpdate(bookmark.id, title);

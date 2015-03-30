@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Bookvark QUnit Example</title>
-		<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.17.1.css">
-	</head>
-	<body>
-		<div id="qunit"></div>
-		<div id="qunit-fixture"></div>
+    <head>
+        <meta charset="utf-8">
+        <title>Bookvark QUnit Example</title>
+        <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.17.1.css">
+    </head>
+    <body>
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
 
-		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-		<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-1.17.1.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/qunit/qunit-1.17.1.js"></script>
 
-		<script type="text/javascript" src="requirejs/require.js"></script>
+        <script type="text/javascript" src="requirejs/require.js"></script>
 
-		<script type="text/javascript">
+        <script type="text/javascript">
 			var unitTests = [
-                'UrlTagStore',
-                'TitleTagStore',
-                'StopWordFilter'
+				'UrlTagStore',
+				'TitleTagStore',
+				'StopWordFilter'
 			];
 
 			require(unitTests.map(function (testType) {
 				return 'UnitTests/' + testType + 'Tests';
 			}));
-		</script>
-	</body>
+        </script>
+    </body>
 </html>

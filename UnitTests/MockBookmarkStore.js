@@ -8,5 +8,5 @@ test('', function () {
 	var mockBookmarkStore = new MockBookmarkStore();
 
 	var bookmarks = mockBookmarkStore.GetBookmarks(input);
-	
+
 });
