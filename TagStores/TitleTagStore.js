@@ -4,7 +4,7 @@ define(['StopWordFilter'], function (stopWordFilter) {
 	}
 
 	TitleTagStore.prototype = {
-		RequestTags: function (bookmark, callback)
+		RequestTags: function (bookmark)
 		{
 			var normalizedTitle = bookmark.title.toLowerCase();
 

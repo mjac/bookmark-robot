@@ -4,7 +4,7 @@ define(function () {
 	}
 
 	IntranetTagStore.prototype = {
-		RequestTags: function (bookmark, callback)
+		RequestTags: function (bookmark)
 		{
 			var tags = [];
 

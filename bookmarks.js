@@ -17,7 +17,6 @@ require([
 	bookmarkTableView.UpdateTree();
 
 	var select = bookmarkTableView.Select.bind(bookmarkTableView);
-	var performAction = bookmarkTableView.PerformAction.bind(bookmarkTableView);
 
 	var updateMap = {};
 

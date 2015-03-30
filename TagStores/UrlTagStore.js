@@ -4,7 +4,7 @@ define(function () {
 	}
 
 	UrlTagStore.prototype = {
-		RequestTags: function (bookmark, callback)
+		RequestTags: function (bookmark)
 		{
 			var tags = [];
 

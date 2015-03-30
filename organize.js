@@ -1,8 +1,6 @@
 require([
 	'RootFolder',
 	'Folder',
-	'MultipleAsyncRequest',
-	'BookmarkTableView',
 	'ChromeBookmarkStore',
 	'TagStores/UrlTagStore',
 	'TagStores/IntranetTagStore',
@@ -16,8 +14,6 @@ require([
 ], function (
 	rootFolderConstructor,
 	folderConstructor,
-	requestConstructor,
-	bookmarkTableViewConstructor,
 	bookmarkStore,
 	urlTagStore,
 	intranetTagStore,

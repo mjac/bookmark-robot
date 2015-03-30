@@ -3,13 +3,11 @@ require(['HtmlParser'], function () {
 	{
 		return '<html><head>' + headHtml + '</head></html>';
 	}
-	;
 
 	function GetExamplePageHtmlWithTitle(title)
 	{
 		return GetExamplePageHtml('<title>' + title + '</title>');
 	}
-	;
 
 	test('Missing title returns null', function () {
 		var pageHtml = GetExamplePageHtml('');

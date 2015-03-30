@@ -1,12 +1,8 @@
 define([
-	'Bookmark',
-	'MultipleAsyncRequest',
 	'BookmarkTreeReader',
 	'RootFolder',
 	'PropertySort'
 ], function (
-	bookmarkConstructor,
-	requestConstructor,
 	bookmarkTreeReader,
 	rootFolderConstructor,
 	propertySort
@@ -45,7 +41,7 @@ define([
 			for (bookmarkIdx in this.bookmarkList) {
 				var bookmark = this.bookmarkList[bookmarkIdx];
 
-				var bookmarkRow = this.tableBody.append('<tr data-id="' + bookmarkIdx +
+				this.tableBody.append('<tr data-id="' + bookmarkIdx +
 					'"><td class="select"><input type="checkbox" value="' + bookmarkIdx +
 					'" /></td><td class="title"><a>' + bookmark.title +
 					'</a></td><td class="url"><a href="' + bookmark.url + '" target="_blank">' + bookmark.url +

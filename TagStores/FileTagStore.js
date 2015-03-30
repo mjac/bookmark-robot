@@ -4,7 +4,7 @@ define(function () {
 	}
 
 	FileTagStore.prototype = {
-		RequestTags: function (bookmark, callback)
+		RequestTags: function (bookmark)
 		{
 			var tags = [];
 

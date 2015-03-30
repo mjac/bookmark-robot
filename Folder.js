@@ -19,7 +19,7 @@ define(function () {
 		GetFolders: function () {
 			return this._folders.concat();
 		},
-		GetAllBookmarks: function (folder) {
+		GetAllBookmarks: function () {
 			var bookmarks = this._bookmarks.concat();
 
 			this._folders.forEach(function (folder) {

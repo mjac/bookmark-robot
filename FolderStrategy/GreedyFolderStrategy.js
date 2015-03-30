@@ -1,4 +1,12 @@
-define(['RootFolder', 'Folder', 'PropertySort'], function (rootFolderConstructor, folderConstructor, propertySort) {
+define([
+	'RootFolder',
+	'Folder',
+	'PropertySort'
+], function (
+	rootFolderConstructor,
+	folderConstructor,
+	propertySort
+	) {
 	var minBookmarksPerFolder = 4;
 
 	function GreedyFolderStrategy()
@@ -49,8 +57,6 @@ define(['RootFolder', 'Folder', 'PropertySort'], function (rootFolderConstructor
 			var tagFolder = new folderConstructor(tag);
 
 			leftOverBookmarks.forEach(function (bookmark) {
-				if (addedBookmarks[bookmark.id])
-					console.log(bookmark, tagPair);
 				tagFolder.AddBookmark(bookmark);
 				addedBookmarks[bookmark.id] = true;
 			});
