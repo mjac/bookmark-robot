@@ -10,7 +10,7 @@ define(['StopWordFilter'], function (stopWordFilter) {
 
 
 			var wordMap = {};
-			var wordRegex = /[^ (]*[a-z][^ )\.]*/gi;
+			var wordRegex = /[^ (]*[a-z][^ )\.\?]*/gi;
 
 			var matches;
 			while ((matches = wordRegex.exec(normalizedTitle)) !== null) {
