@@ -28,7 +28,7 @@ require(['TagStores/TitleTagStore', 'Bookmark'], function (tagStore, bookmarkCon
 
 	function testMultipleTags(title, expectedTitles, assert)
 	{
-		var bookmark = new bookmarkConstructor(title, 'url');
+		var bookmark = new bookmarkConstructor('1', title, 'url');
 
 		var tags = tagStore.RequestTags(bookmark);
 		assert.deepEqual(tags, expectedTitles);
