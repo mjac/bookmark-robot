@@ -1,7 +1,6 @@
 require([
 	'BookmarkTableView',
 	'ChromeBookmarkStore',
-	'TagStores/DefaultCompositeTagStore',
 	'BookmarkContentRepository',
 	'HtmlParser',
 	'MultipleAsyncRequest',
@@ -9,13 +8,12 @@ require([
 ], function (
 	bookmarkTableViewConstructor,
 	bookmarkStore,
-	compositeTagStore,
 	bookmarkContentRepository,
 	htmlParser,
 	requestConstructor,
 	bookmarkUpdateFactory
 	) {
-	bookmarkTableView = new bookmarkTableViewConstructor($('#bookmarksTable'), bookmarkStore, compositeTagStore)
+	bookmarkTableView = new bookmarkTableViewConstructor($('#bookmarksTable'), bookmarkStore);
 	bookmarkTableView.UpdateTree();
 
 	var select = bookmarkTableView.Select.bind(bookmarkTableView);

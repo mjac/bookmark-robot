@@ -11,13 +11,12 @@ define([
 	rootFolderConstructor,
 	propertySort
 	) {
-	function BookmarkTableView(tableNode, bookmarkStore, tagStore)
+	function BookmarkTableView(tableNode, bookmarkStore)
 	{
 		this.tableNode = tableNode;
 		this.tableBody = tableNode.find('tbody');
 
 		this.bookmarkStore = bookmarkStore;
-		this.tagStore = tagStore;
 		this.bookmarkList = [];
 		this.bookmarkMap = {};
 	}
