@@ -1,29 +1,19 @@
 require(['HtmlParser'], function (HtmlParser) {
 	QUnit.module('HtmlParser');
 
-	function GetExamplePageHtml(headHtml)
-	{
-		return '<html><head>' + headHtml + '</head></html>';
-	}
-
-	function GetExamplePageHtmlWithTitle(title)
-	{
-		return GetExamplePageHtml('<title>' + title + '</title>');
-	}
-
-	test('Missing title returns null', function () {
+	QUnit.test('Missing title returns null', function () {
 		var pageHtml = GetExamplePageHtml('');
 		var title = HtmlParser.GetTitle(pageHtml);
 		strictEqual(title, null);
 	});
 
-	test('Empty returns null', function () {
+	QUnit.test('Empty returns null', function () {
 		var pageHtml = GetExamplePageHtmlWithTitle('');
 		var title = HtmlParser.GetTitle(pageHtml);
 		strictEqual(title, null);
 	});
 
-	test('Page title is returned', function () {
+	QUnit.test('Page title is returned', function () {
 		var pageTitle = 'page title';
 		var pageHtml = GetExamplePageHtmlWithTitle(pageTitle);
 
@@ -32,7 +22,7 @@ require(['HtmlParser'], function (HtmlParser) {
 		strictEqual(title, pageTitle);
 	});
 
-	test('Page title is trimmed', function () {
+	QUnit.test('Page title is trimmed', function () {
 		var pageTitle = 'page title';
 		var pageTitleWithPadding = '\n ' + pageTitle + '\n';
 		var pageHtml = GetExamplePageHtmlWithTitle(pageTitleWithPadding);
@@ -42,7 +32,7 @@ require(['HtmlParser'], function (HtmlParser) {
 		strictEqual(title, pageTitle);
 	});
 
-	test('Page title is unescaped', function () {
+	QUnit.test('Page title is unescaped', function () {
 		var pageTitle = 'hypergeometric &raquo; SSH Do&#8217;s and Don&#8217;ts';
 		var pageHtml = GetExamplePageHtmlWithTitle(pageTitle);
 
@@ -50,4 +40,14 @@ require(['HtmlParser'], function (HtmlParser) {
 
 		strictEqual(title, 'hypergeometric » SSH Do’s and Don’ts');
 	});
+
+	function GetExamplePageHtml(headHtml)
+	{
+		return '<html><head>' + headHtml + '</head></html>';
+	}
+
+	function GetExamplePageHtmlWithTitle(title)
+	{
+		return GetExamplePageHtml('<title>' + title + '</title>');
+	}
 });
