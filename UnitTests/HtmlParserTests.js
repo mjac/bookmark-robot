@@ -1,4 +1,6 @@
-require(['HtmlParser'], function () {
+require(['HtmlParser'], function (HtmlParser) {
+	QUnit.module('HtmlParser');
+
 	function GetExamplePageHtml(headHtml)
 	{
 		return '<html><head>' + headHtml + '</head></html>';
