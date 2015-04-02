@@ -13,12 +13,8 @@ require(['TagStores/UrlTagStore', 'Bookmark'], function (tagStore, bookmarkConst
 		testMultipleTags('http://drive.google.com/', ['drive.google.com', 'google.com'], assert);
 	});
 
-	QUnit.test('Localhost maps to own tag', function (assert) {
-		testSingleTag('http://localhost/', 'localhost', assert);
-	});
-
-	QUnit.test('Local hostname maps to intranet', function (assert) {
-		testSingleTag('http://teamcity/', 'intranet', assert);
+	QUnit.test('Non qualified domain name does not map to tag', function (assert) {
+		testMultipleTags('http://teamcity/', [], assert);
 	});
 
 	QUnit.test('Port is ignored', function (assert) {
@@ -27,6 +23,10 @@ require(['TagStores/UrlTagStore', 'Bookmark'], function (tagStore, bookmarkConst
 
 	QUnit.test('Small hostname parts like co.uk are ignored', function (assert) {
 		testSingleTag('http://google.co.uk/', 'google.co.uk', assert);
+	});
+
+	QUnit.test('WWW is removed from the hostname', function (assert) {
+		testSingleTag('http://www.google.co.uk/', 'google.co.uk', assert);
 	});
 
 	function testSingleTag(url, expected, assert)

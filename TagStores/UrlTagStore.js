@@ -6,26 +6,16 @@ define(function () {
 	UrlTagStore.prototype = {
 		RequestTags: function (bookmark)
 		{
-			var tags = [];
-
 			var urlMatch = bookmark.url.match(/\/\/(?:www\.)?([^/:]+)/i);
 
 			if (urlMatch !== null) {
 				var hostname = urlMatch[1].toLowerCase();
-
-				if (hostname.indexOf('.') >= 0) {
-					// Fully qualified hostname
-					var hostnameTags = this._getHostnameTags(hostname);
-					tags = tags.concat(hostnameTags);
-				} else if (hostname === 'localhost') {
-					tags.push('localhost');
-				} else {
-					tags.push('intranet');
-				}
+				return this._getHostnameTags(hostname);
 			}
 
-			return tags;
+			return [];
 		},
+
 		_getHostnameTags: function (hostname)
 		{
 			var tags = [];
