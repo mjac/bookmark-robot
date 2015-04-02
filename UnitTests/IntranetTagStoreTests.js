@@ -9,6 +9,10 @@ require(['TagStores/IntranetTagStore', 'Bookmark'], function (tagStore, bookmark
 		testSingleTag('http://teamcity/', 'teamcity', assert);
 	});
 
+	QUnit.test('Fully qualified hostname maps does not map to tag', function (assert) {
+		testMultipleTags('http://google.co.uk/', [], assert);
+	});
+
 	function testSingleTag(url, expected, assert)
 	{
 		testMultipleTags(url, [expected], assert);
