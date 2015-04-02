@@ -36,7 +36,7 @@ define(function () {
 
 	// Common title words that convey no meaning
 	stopWords += ',';
-	stopWords += 'web,website,site,net,welcome,blog,best,big,day,use,ways,way,org,file,magazine,uk,great,good,things,open,online,free,developer,developers,think,world,write,login,redirecting';
+	stopWords += 'web,website,site,net,welcome,blog,best,big,day,use,ways,way,org,file,magazine,uk,great,good,things,open,online,free,developer,developers,think,world,write,login,redirecting,us';
 
 	return new StopWordFilter();
 });
