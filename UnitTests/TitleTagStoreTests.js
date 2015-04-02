@@ -13,12 +13,28 @@ require(['TagStores/TitleTagStore', 'Bookmark'], function (tagStore, bookmarkCon
 		testMultipleTags('definition functions with dependencies', ['definition', 'functions', 'dependencies'], assert);
 	});
 
+	QUnit.test('Title tags do not include period', function (assert) {
+		testSingleTag('Tutorials.', 'tutorials', assert);
+	});
+
 	QUnit.test('Title tags become lowercase', function (assert) {
 		testSingleTag('Coding', 'coding', assert);
 	});
 
 	QUnit.test('Punctuation is removed', function (assert) {
 		testSingleTag('coding?', 'coding', assert);
+	});
+
+	QUnit.test('Question marks are removed from tags', function (assert) {
+		testSingleTag('Design?', 'design', assert);
+	});
+
+	QUnit.test('Notification counts at start of title are ignored', function (assert) {
+		testSingleTag('(100) Tutorials', 'tutorials', assert);
+	});
+
+	QUnit.test('Programming languages are recognised', function (assert) {
+		testMultipleTags('C# F# C++', ['c#', 'f#', 'c++'], assert);
 	});
 
 	function testSingleTag(title, expectedTitle, assert)
