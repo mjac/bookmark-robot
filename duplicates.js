@@ -30,9 +30,17 @@ require([
 			bookmarkMap[bookmark.url] = bookmark;
 			return false;
 		});
-		
-		var duplicatesTreeViewer = new bookmarkTreeViewerConstructor('#duplicates', true);
-		duplicatesTreeViewer.ShowFolder(rootFolder);
 
+		if (rootFolder.IsEmpty()) {
+			$('#duplicateFoundSection').hide();			
+			$('#duplicateNotFoundSection').show();			
+		} else {
+			$('#duplicateFoundSection').show();			
+			$('#duplicateNotFoundSection').hide();			
+			$('#duplicateCount').text(rootFolder.GetAllBookmarks().length);
+
+			var duplicatesTreeViewer = new bookmarkTreeViewerConstructor('#duplicates', true);
+			duplicatesTreeViewer.ShowFolder(rootFolder);
+		}
 	}.bind(this));
 });
