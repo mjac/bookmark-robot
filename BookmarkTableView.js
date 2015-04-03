@@ -114,9 +114,9 @@ define([
 
 				var inputNode = $(this).find('input[type=checkbox]');
 
-				var check = !inputNode.attr('checked');
+				var check = !inputNode.prop('checked');
 
-				inputNode.attr('checked', check);
+				inputNode.prop('checked', check);
 				$(this).toggleClass('selected', check);
 			});
 

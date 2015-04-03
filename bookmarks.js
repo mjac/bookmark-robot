@@ -20,6 +20,8 @@ require([
 
 	var select = bookmarkTableView.Select.bind(bookmarkTableView);
 
+	bookmarkTableView.AttachEvents();
+
 	var updateMap = {};
 
 	$('#actionConnect').on('click', function () {
@@ -136,6 +138,7 @@ require([
 	});
 
 	$('#viewChecked').on('click', function () {
-		$('#bookmarksTable').toggleClass('showSelected', $(this).attr('checked'));
+		var showSelected = $(this).prop('checked');
+		$('#bookmarksTable').toggleClass('showSelected', showSelected);
 	});
 });
