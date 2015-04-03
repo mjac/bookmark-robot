@@ -5,6 +5,7 @@
 		"requirejs": "latest",
 		"jquery": "latest",
 		"jstree": "latest",
-		"qunit": "latest"
+		"qunit": "latest",
+		"pure": "latest"
 	}
 }
