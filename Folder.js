@@ -28,6 +28,9 @@ define(function () {
 			});
 
 			return bookmarks;
+		},
+		IsEmpty: function () {
+			return !(this._folders.length > 0 || this._bookmarks.length > 0);
 		}
 	};
 
