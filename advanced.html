@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Update Titles - Bookmark Robot</title>
+		
+        <link rel="stylesheet" type="text/css" href="vendor/pure/pure-min.css">
+        <link rel="stylesheet" href="vendor/jstree/dist/themes/default/style.min.css" />
+
+        <link rel="stylesheet" type="text/css" href="robot.css">
+		
+        <script type="text/javascript" src="config.js"></script>
+        <script data-main="advanced.js" type="text/javascript" src="vendor/requirejs/require.js"></script>
+    </head>
+    <body>
+		<div class="header">
+			<h1>Bookmark Robot</h1>
+		</div>
+		<div class="menu">
+			<div class="pure-menu pure-menu-horizontal">
+				<ul class="pure-menu-list">
+					<li class="pure-menu-item">
+						<a href="organize.html" class="pure-menu-link">Organize</a>
+					</li>
+					<li class="pure-menu-item">
+						<a href="duplicates.html" class="pure-menu-link">Find Duplicates</a>
+					</li>
+					<li class="pure-menu-item pure-menu-selected">
+						<a href="advanced.html" class="pure-menu-link">Advanced</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		
+        <div class="pure-g">
+			<div class="pure-u-1-4 l-box">
+				<div class="pure-menu">					
+					<span class="pure-menu-heading">Select</span>
+					<ul class="pure-menu-list" id="selection">
+						<li class="pure-menu-item">
+							<a href="#" id="selectAll" class="pure-menu-link">All</a>
+						</li>
+						<li class="pure-menu-item">
+							<a href="#" id="selectInvert" class="pure-menu-link">Invert</a>
+						</li>
+						<li class="pure-menu-item">
+							<a href="#" id="selectNone" class="pure-menu-link">None</a>
+						</li>
+						<li class="pure-menu-item">
+							<a href="#" id="selectChanged" class="pure-menu-link">Changed</a>
+						</li>
+						<li class="pure-menu-item">
+							<a href="#" id="selectLoaded" class="pure-menu-link">Loaded</a>
+						</li>
+						<li class="pure-menu-item">
+							<a href="#" id="selectFailed" class="pure-menu-link">Failed</a>
+						</li>
+					</ul>
+					
+					<span class="pure-menu-heading">Show</span>
+					<ul class="pure-menu-list" id="view">
+						<li class="pure-menu-item">
+							<a href="#" id="showAll" class="pure-menu-link">All</a>
+						</li>
+						<li class="pure-menu-item">
+							<a href="#" id="showSelected" class="pure-menu-link">Selected</a>
+						</li>
+					</ul>
+					
+					<span class="pure-menu-heading">Actions</span>
+					<ul class="pure-menu-list" id="actions">
+						<li class="pure-menu-item">
+							<a href="#" id="actionConnect" class="pure-menu-link">Connect</a>
+						</li>
+						<li class="pure-menu-item">
+							<a href="#" id="actionSave" class="pure-menu-link">Save</a>
+						</li>
+						<li class="pure-menu-item">
+							<a href="#" id="actionDelete" class="pure-menu-link">Delete</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="pure-u-18-24 l-box">
+				<table id="bookmarksTable" class="pure-table pure-table-horizontal">
+					<thead>
+						<tr>
+							<th>Title</th>
+							<th>Url</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+        </div>
+    </body>
+</html>

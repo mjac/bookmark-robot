@@ -3,7 +3,7 @@
 	"version": "1.0",
 	"manifest_version": 2,
 	"description": "Update bookmark titles, remove duplicates and check for broken links.",
-	"options_page": "bookmarks.html",
+	"options_page": "organize.html",
 	"permissions": [
 		"http://*/",
 		"https://*/",

@@ -42,9 +42,9 @@ define([
 				var bookmark = this.bookmarkList[bookmarkIdx];
 
 				this.tableBody.append('<tr data-id="' + bookmarkIdx +
-					'"><td class="select"><input type="checkbox" value="' + bookmarkIdx +
-					'" /></td><td class="title"><a>' + bookmark.title +
-					'</a></td><td class="url"><a href="' + bookmark.url + '" target="_blank">' + bookmark.url +
+					'"><td class="title"><a>' + bookmark.title +
+					'</a><input type="checkbox" value="' + bookmarkIdx +
+					'" style="display: none;" /></td><td class="url"><a href="' + bookmark.url + '" target="_blank">' + bookmark.url +
 					'</a></td></tr>');
 			}
 		},

@@ -7,6 +7,13 @@ body {
 	padding: 2em;
 }
 
+
+.pure-g > div {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
 .l-box {
     padding: 1em;
 }
@@ -15,8 +22,51 @@ body {
 	background-position: -100px -68px;
 }
 
-.pure-menu-horizontal {
+.menu .pure-menu-horizontal {
 	border: 1px solid #999;
 	padding-bottom: 1px;
 	border-radius: 3px;
+}
+
+#bookmarksTable .failed {
+    color: #B00;
+}
+
+#bookmarksTable .found {
+    color: #0B0;
+}
+
+#bookmarksTable .new {
+    color: #AA0;
+}
+
+#bookmarksTable tbody tr {
+    cursor: pointer;
+}
+
+#bookmarksTable.showSelected tbody tr {
+	display: none;
+}
+#bookmarksTable.showSelected tbody tr.selected {
+	display: table-row;
+}
+
+#bookmarksTable tbody tr.selected {
+    background: #f0f0f0;
+}
+#bookmarksTable tbody tr.selected a {
+    background: #f0f0f0;
+}
+
+#bookmarksTable td, #bookmarksTable th {
+	max-width: 25em;
+	overflow: hidden;
+}
+#bookmarksTable td:hover {
+	overflow: visible;
+}
+
+#bookmarksTable {
+	table-layout:fixed;
+	width: 100%;
 }

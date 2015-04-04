@@ -122,23 +122,11 @@ require([
 		});
 	});
 
-	$('#selectRepeated').on('click', function () {
-		select(function () {
-			var url = {};
-			return function (idx, bookmark, row) {
-				if (bookmark.url in url) {
-					return true;
-				}
-
-				url[bookmark.url] = true;
-
-				return false;
-			};
-		}());
+	$('#showAll').on('click', function () {
+		$('#bookmarksTable').removeClass('showSelected');
 	});
-
-	$('#viewChecked').on('click', function () {
-		var showSelected = $(this).prop('checked');
-		$('#bookmarksTable').toggleClass('showSelected', showSelected);
+	
+	$('#showSelected').on('click', function () {
+		$('#bookmarksTable').addClass('showSelected');
 	});
 });
