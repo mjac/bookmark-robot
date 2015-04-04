@@ -42,5 +42,9 @@ require([
 			var duplicatesTreeViewer = new bookmarkTreeViewerConstructor('#duplicates', true);
 			duplicatesTreeViewer.ShowFolder(rootFolder);
 		}
+		
+		$('#RemoveDuplicates').click(function () {
+			bookmarkStore.RemoveDuplicates();
+		});
 	}.bind(this));
 });
