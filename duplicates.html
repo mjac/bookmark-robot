@@ -1,20 +1,15 @@
 <!doctype html>
 <html>
     <head>
-        <title>Find Duplicates</title>
+        <title>Find Duplicates - Bookmark Robot</title>
+		
         <link rel="stylesheet" type="text/css" href="vendor/pure/pure-min.css">
-        <link rel="stylesheet" type="text/css" href="robot.css">
-
         <link rel="stylesheet" href="vendor/jstree/dist/themes/default/style.min.css" />
 
+        <link rel="stylesheet" type="text/css" href="robot.css">
+		
         <script type="text/javascript" src="config.js"></script>
         <script data-main="duplicates.js" type="text/javascript" src="vendor/requirejs/require.js"></script>
-
-        <style type="text/css">
-            .jstree-leaf .jstree-themeicon.jstree-icon:empty {
-                background-position: -100px -68px;
-            }
-        </style>
     </head>
     <body>
 		<div class="header">
@@ -24,21 +19,27 @@
 			<div class="pure-menu pure-menu-horizontal">
 				<ul class="pure-menu-list">
 					<li class="pure-menu-item pure-menu-selected">
-						<a href="#" class="pure-menu-link">Find duplicates</a>
+						<a href="duplicates.html" class="pure-menu-link">Find duplicates</a>
 					</li>
 					<li class="pure-menu-item">
-						<a href="#" class="pure-menu-link">Reorganise</a>
+						<a href="organize.html" class="pure-menu-link">Organize</a>
 					</li>
 				</ul>
 			</div>
 		</div>
 		<div class="pure-g">
-			<div class="pure-u-1-2 l-box" id="duplicateFoundSection" style="display: none;">
+			<div class="pure-u-1-2" id="duplicateFoundSection" style="display: none;">
 				<h2>Duplicates found (<span id="duplicateCount"></span>)</h2>
 				<div id="duplicates"></div>
 			</div>
-			<div class="pure-u-1-2 l-box" id="duplicateNotFoundSection" style="display: none;">
+			<div class="pure-u-1-2" id="duplicateNotFoundSection" style="display: none;">
 				<h2>Duplicates not found</h2>
+			</div>
+			<div class="pure-u-1-2">
+				<h2>Actions</h2>
+				<p>
+					<a id="RemoveDuplicates" class="pure-button pure-button-primary">Remove Duplicates</a>
+				</p>
 			</div>
 		</div>
     </body>

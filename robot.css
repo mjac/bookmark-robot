@@ -10,3 +10,13 @@ body {
 .l-box {
     padding: 1em;
 }
+
+.jstree-leaf .jstree-themeicon.jstree-icon:empty {
+	background-position: -100px -68px;
+}
+
+.pure-menu-horizontal {
+	border: 1px solid #999;
+	padding-bottom: 1px;
+	border-radius: 3px;
+}
