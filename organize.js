@@ -71,7 +71,7 @@ require([
 		var beforeRootFolder = new rootFolderConstructor();
 		bookmarkTreeReader.readTree(bookmarkTree[0].children, beforeRootFolder);
 
-		var beforeTreeViewer = new bookmarkTreeViewerConstructor('#before');
+		var beforeTreeViewer = new bookmarkTreeViewerConstructor('#before', true);
 		beforeTreeViewer.ShowFolder(beforeRootFolder);
 
 		var bookmarkList = beforeRootFolder.GetAllBookmarks();
@@ -90,7 +90,7 @@ require([
 
 		folderSorter(afterRootFolder);
 
-		var afterTreeViewer = new bookmarkTreeViewerConstructor('#after');
+		var afterTreeViewer = new bookmarkTreeViewerConstructor('#after', true);
 		afterTreeViewer.ShowFolder(afterRootFolder);
 
 		$('#UpdateBookmarks').click(function () {
