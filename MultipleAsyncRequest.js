@@ -5,12 +5,20 @@ define(function () {
 		this.requests = [];
 
 		this.pendingRequests = 0;
+		this.totalRequests = 0;
+
 		this.maxPendingRequests = null;
 	}
 
 	MultipleAsyncRequest.prototype = {
 		AddRequest: function (request) {
 			this.requests.push(request);
+		},
+		GetStatus: function () {
+			return {
+				Completed: this.nextRequestIndex - this.pendingRequests,
+				Total: this.totalRequests
+			};
 		},
 		SetFinalCallback: function (finalCallback) {
 			this.finalCallback = finalCallback;
