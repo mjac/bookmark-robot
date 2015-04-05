@@ -58,15 +58,15 @@ body {
     background: #f0f0f0;
 }
 
-#bookmarksTable td, #bookmarksTable th {
+.table-fullwidth td, .table-fullwidth th {
 	max-width: 25em;
 	overflow: hidden;
 }
-#bookmarksTable td:hover {
+.table-fullwidth td:hover {
 	overflow: visible;
 }
 
-#bookmarksTable {
+.table-fullwidth {
 	table-layout:fixed;
 	width: 100%;
 }
