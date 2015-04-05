@@ -6,6 +6,7 @@
 		"jquery": "latest",
 		"jstree": "latest",
 		"qunit": "latest",
-		"pure": "latest"
+		"pure": "latest",
+		"knockout": "latest"
 	}
 }
