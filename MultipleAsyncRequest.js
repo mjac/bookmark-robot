@@ -26,6 +26,9 @@ define(function () {
 		SetMaxPendingRequests: function (maxPendingRequests) {
 			this.maxPendingRequests = maxPendingRequests;
 		},
+		Stop: function () {
+			this.totalRequests = this.nextRequestIndex;
+		},
 		Execute: function () {
 			this.nextRequestIndex = 0;
 			this.totalRequests = this.requests.length;
