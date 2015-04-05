@@ -36,7 +36,6 @@ define(function () {
 		},
 		_ProcessRequests: function () {
 			var finalCallback = this.finalCallback;
-			var requestsRemaining = this.requests.length;
 
 			while (this.nextRequestIndex < this.totalRequests) {
 				if (this.maxPendingRequests !== null && this.pendingRequests >= this.maxPendingRequests) {
