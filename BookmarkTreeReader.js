@@ -18,7 +18,7 @@ define([
 
 			this.readTree(bookmarkTree.children, folder);
 		} else if ($.isArray(bookmarkTree)) {
-			for (localIdx in bookmarkTree) {
+			for (var localIdx in bookmarkTree) {
 				var bookmarkChild = bookmarkTree[localIdx];
 				this.readTree(bookmarkChild, bookmarks);
 			}
