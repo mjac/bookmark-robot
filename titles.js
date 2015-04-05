@@ -41,6 +41,11 @@ require([
 			function processUpdate(bookmarkUpdate) {
 				callback();
 				updateInterval();
+
+				var row = $(bookmarkUpdate.success ? '#updatedTitles' : '#cannotFind');
+				if (bookmarkUpdate.title !== bookmark.title) {
+					row.append($('<li />').text(bookmark.title));
+				}
 			}
 
 			bookmarkContentRepository.GetHTML(url, function (data) {
