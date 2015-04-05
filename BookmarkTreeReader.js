@@ -1,7 +1,9 @@
 define([
+	'jquery',
 	'Bookmark',
 	'Folder'
 ], function (
+	$,
 	bookmarkConstructor,
 	folderConstructor
 	) {
