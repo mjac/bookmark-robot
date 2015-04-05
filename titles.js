@@ -28,8 +28,6 @@ require([
 		bookmarkTreeReader.readTree(bookmarkTree[0].children, beforeRootFolder);
 
 		bookmarks = beforeRootFolder.GetAllBookmarks();
-
-		start();
 	}.bind(this));
 
 	function getTitleRequest(bookmarks)
